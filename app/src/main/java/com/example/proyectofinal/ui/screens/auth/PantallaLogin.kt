@@ -17,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -28,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import kotlinx.coroutines.launch
 import com.example.proyectofinal.data.Dorado
 import com.example.proyectofinal.data.FondoOscuro
 import com.example.proyectofinal.data.Oscuro
@@ -42,6 +44,7 @@ import com.example.proyectofinal.viewmodel.BarberViewModel
 @Composable
 fun LoginScreen(navController: NavController, vm: BarberViewModel = viewModel()) {
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     var correo by remember { mutableStateOf("") }
     var contrasena by remember { mutableStateOf("") }
     var error by remember { mutableStateOf("") }
@@ -92,13 +95,17 @@ fun LoginScreen(navController: NavController, vm: BarberViewModel = viewModel())
                 onClick = {
                     if (correo.isBlank() || contrasena.isBlank()) {
                         error = "Completa todos los campos"
-                    } else if (Sesion.iniciarSesion(context, correo, contrasena)) {
-                        guardarSesion(context, correo, Sesion.usuarioActual?.nombre ?: "")
-                        navController.navigate(Pantallas.Home.ruta) {
-                            popUpTo(Pantallas.Login.ruta) { inclusive = true }
-                        }
                     } else {
-                        error = "Correo o contraseña incorrectos"
+                        // La consulta a la BD es suspend: se ejecuta dentro de una corrutina
+                        scope.launch {
+                            if (Sesion.iniciarSesion(context, correo, contrasena)) {
+                                navController.navigate(Pantallas.Home.ruta) {
+                                    popUpTo(Pantallas.Login.ruta) { inclusive = true }
+                                }
+                            } else {
+                                error = "Correo o contraseña incorrectos"
+                            }
+                        }
                     }
                 },
                 colors = ButtonDefaults.buttonColors(

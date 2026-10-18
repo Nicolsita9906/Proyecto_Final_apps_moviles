@@ -43,14 +43,13 @@ import com.example.proyectofinal.data.Gris
 import com.example.proyectofinal.data.Oscuro
 import com.example.proyectofinal.data.Sesion
 import com.example.proyectofinal.data.cerrarSesion
-import com.example.proyectofinal.data.listaBarberias
 import com.example.proyectofinal.data.obtenerNombre
 import com.example.proyectofinal.navigation.Pantallas
 import com.example.proyectofinal.ui.screens.BarraInferior
 
 
 @Composable
-fun PantallaInicio(navController: NavController) {
+fun PantallaInicio(navController: NavController, barberias: List<Barberia>) {
     val context = LocalContext.current
     Scaffold(
         containerColor = Crema,
@@ -154,7 +153,7 @@ fun PantallaInicio(navController: NavController) {
                 Text("Cerca de ti", color = Gris)
             }
 
-            items(listaBarberias) { barberia ->
+            items(barberias) { barberia ->
                 ItemBarberia(
                     barberia = barberia,
                     onClick = { navController.navigate(Pantallas.Detalle.crear(barberia.id)) }

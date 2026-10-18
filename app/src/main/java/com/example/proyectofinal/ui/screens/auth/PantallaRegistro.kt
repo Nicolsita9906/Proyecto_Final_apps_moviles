@@ -17,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -27,6 +28,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import kotlinx.coroutines.launch
 import com.example.proyectofinal.data.Dorado
 import com.example.proyectofinal.data.FondoOscuro
 import com.example.proyectofinal.data.Oscuro
@@ -41,6 +43,7 @@ import com.example.proyectofinal.ui.screens.SelectorAcceso
 @Composable
 fun PantallaRegistro(navController: NavController) {
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     var nombre by remember { mutableStateOf("") }
     var correo by remember { mutableStateOf("") }
     var telefono by remember { mutableStateOf("") }
@@ -132,13 +135,15 @@ fun PantallaRegistro(navController: NavController) {
                             telefono = telefono,
                             contrasena = contrasena
                         )
-                        if (Sesion.registrar(context, usuario)) {
-                            guardarSesion(context, usuario.correo, usuario.nombre)
-                            navController.navigate(Pantallas.Home.ruta) {
-                                popUpTo(Pantallas.Login.ruta) { inclusive = true }
+                        // La consulta a la BD es suspend: se ejecuta dentro de una corrutina
+                        scope.launch {
+                            if (Sesion.registrar(context, usuario)) {
+                                navController.navigate(Pantallas.Home.ruta) {
+                                    popUpTo(Pantallas.Login.ruta) { inclusive = true }
+                                }
+                            } else {
+                                error = "Ese correo ya está registrado"
                             }
-                        } else {
-                            error = "Ese correo ya está registrado"
                         }
                     }
                 },

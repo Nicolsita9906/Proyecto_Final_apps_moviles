@@ -27,6 +27,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -48,7 +49,6 @@ import com.example.proyectofinal.data.Dorado
 import com.example.proyectofinal.data.Gris
 import com.example.proyectofinal.data.Oscuro
 import com.example.proyectofinal.data.Servicio
-import com.example.proyectofinal.data.listaServicios
 import com.example.proyectofinal.ui.screens.BarraSuperior
 import com.example.proyectofinal.ui.screens.BotonDorado
 import com.example.proyectofinal.ui.screens.IconoCaja
@@ -63,6 +63,10 @@ import com.example.proyectofinal.viewmodel.BarberViewModel
 @Composable
 fun PantallaDetalle(navController: NavController, barberia: Barberia, vm: BarberViewModel) {
     val barberos by vm.barberos.collectAsState()
+    // Servicios y reseñas de ESTA barbería, leídos de Room
+    val servicios by vm.servicios.collectAsState()
+    val resenas by vm.resenas.collectAsState()
+    LaunchedEffect(barberia.id) { vm.elegirBarberia(barberia.id) }
     var servicioSeleccionado by remember { mutableStateOf(0) }
     var tabSeleccionada by remember { mutableStateOf("Servicios") }
 
@@ -74,7 +78,7 @@ fun PantallaDetalle(navController: NavController, barberia: Barberia, vm: Barber
                 // Pasa la barbería y el servicio elegidos a la reserva
                 vm.limpiarSeleccion()
                 vm.elegirBarberia(barberia.id)
-                vm.elegirServicio(listaServicios[servicioSeleccionado])
+                servicios.getOrNull(servicioSeleccionado)?.let { vm.elegirServicio(it) }
                 navController.navigate(Pantallas.ServicioBarbero.ruta)
             }
         }
@@ -144,7 +148,7 @@ fun PantallaDetalle(navController: NavController, barberia: Barberia, vm: Barber
 
             // Contenido de la pestaña
             if (tabSeleccionada == "Servicios") {
-                itemsIndexed(listaServicios) { indice, servicio ->
+                itemsIndexed(servicios) { indice, servicio ->
                     ItemServicio(
                         servicio = servicio,
                         seleccionado = indice == servicioSeleccionado,
@@ -165,7 +169,7 @@ fun PantallaDetalle(navController: NavController, barberia: Barberia, vm: Barber
                     }
                 }
             } else {
-                items(vm.resenas) { r ->
+                items(resenas) { r ->
                     TarjetaBlanca {
                         Text(r.autor, fontWeight = FontWeight.Bold)
                         Text("★".repeat(r.estrellas), color = Dorado, fontSize = 12.sp)

@@ -16,7 +16,11 @@ data class Servicio(
     val nombre: String,
     val duracion: String,
     val precio: String,
-    val icon: Int
+    val icon: Int,
+    // Datos que vienen de la tabla `servicio` (con valor por defecto para no romper las pantallas)
+    val id: Int = 0,
+    val duracionMin: Int = 0,
+    val precioValor: Double = 0.0
 )
 
 data class Barberia(

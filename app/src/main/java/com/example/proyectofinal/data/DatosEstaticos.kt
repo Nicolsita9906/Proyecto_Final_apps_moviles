@@ -4,20 +4,17 @@ import com.example.proyectofinal.R
 
 /**
  * ============================================================
- *  FUENTE ÚNICA DE DATOS (ESTÁTICOS POR AHORA)
+ *  DATOS ESTÁTICOS — YA NO SON LA FUENTE PRINCIPAL
  * ============================================================
- *  Usa tus modelos: Servicio, Barberia, Barbero, Cita, Dia, Horario, Resena.
- *  Para agregar persistencia (Room / SQLite / API / MySQL) se reemplazan
- *  estas listas por consultas en BarberViewModel ("TODO PERSISTENCIA").
+ *  El catálogo (barberías, servicios, barberos, reseñas) y las citas ahora viven en
+ *  la base de datos Room: ver data/model (tablas), data/dao, data/database y data/repository.
  *
- *   barberia         -> tabla `barberia`
- *   servicios        -> tabla `servicio`
- *   barberos         -> tabla `barbero`
- *   resenas          -> tabla `resena`
- *   dias / horarios  -> tabla `disponibilidad` (barbero_id, fecha, hora, ocupada)
- *   citasIniciales   -> tabla `cita`
- *   barberiaPorCita  -> columna `barberia_id` de `cita` (el modelo Cita no la trae)
- *   sesión           -> SharedPreferences (SesionPrefs.kt); usuarios -> tabla `usuario`
+ *  De este archivo la app SOLO sigue usando:
+ *    - dias / horarios / MES / MES_CORTO  (selector de fecha y hora de la reserva)
+ *      TODO PERSISTENCIA: calcular con horario_atencion + citas ya tomadas del barbero.
+ *
+ *  Todo lo demás (barberias, servicios, barberos, resenas, citasIniciales,
+ *  barberiaPorCita) quedó como referencia y ya no se lee.
  * ============================================================
  */
 object DatosEstaticos {

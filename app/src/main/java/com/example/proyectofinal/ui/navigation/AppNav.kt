@@ -2,6 +2,8 @@ package com.example.proyectofinal.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -32,6 +34,8 @@ import com.example.proyectofinal.viewmodel.BarberViewModel
 @Composable
 fun AppNav(inicio: String, vm: BarberViewModel = viewModel()) {
     val nav = rememberNavController()
+    // Barberías que vienen de la base de datos (Room)
+    val barberias by vm.barberias.collectAsState()
 
     NavHost(navController = nav, startDestination = inicio) {
 
@@ -51,7 +55,7 @@ fun AppNav(inicio: String, vm: BarberViewModel = viewModel()) {
                 // La sesión ya se guardó en Login/Registro; aquí solo se termina el splash
                 SplashScreen { vm.splashPendiente = false }
             } else {
-                PantallaInicio(nav)
+                PantallaInicio(nav, barberias)
             }
         }
 
@@ -61,8 +65,9 @@ fun AppNav(inicio: String, vm: BarberViewModel = viewModel()) {
             arguments = listOf(navArgument("id") { type = NavType.IntType })
         ) { entry ->
             val id = entry.arguments?.getInt("id") ?: 0
-            val barberia = vm.barberias.firstOrNull { it.id == id } ?: vm.barberias.first()
-            PantallaDetalle(nav, barberia, vm)
+            val barberia = barberias.firstOrNull { it.id == id }
+            // Mientras Room entrega la lista no hay nada que mostrar
+            if (barberia != null) PantallaDetalle(nav, barberia, vm)
         }
         composable(Pantallas.ServicioBarbero.ruta) { ServicioBarberoScreen(nav, vm) }
         composable(Pantallas.FechaHora.ruta) { FechaHoraScreen(nav, vm) }

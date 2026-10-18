@@ -30,6 +30,7 @@ fun DetalleBarberiaScreen(nav: NavController, vm: BarberViewModel) {
     var tab by remember { mutableIntStateOf(0) }
     val servicios by vm.servicios.collectAsState()
     val barberos by vm.barberos.collectAsState()
+    val resenas by vm.resenas.collectAsState()
     val b = vm.barberia
 
     Scaffold(
@@ -92,7 +93,7 @@ fun DetalleBarberiaScreen(nav: NavController, vm: BarberViewModel) {
                             }
                         }
                     }
-                    else -> items(vm.resenas) { r ->
+                    else -> items(resenas) { r ->
                         TarjetaBlanca(Modifier.padding(vertical = 5.dp)) {
                             Text(r.autor, fontWeight = FontWeight.Bold, fontSize = 14.sp)
                             Text("★".repeat(r.estrellas), color = Dorado, fontSize = 12.sp)

@@ -55,7 +55,24 @@ object Sesion {
     /** true si el correo existe, está ACTIVO y la contraseña coincide. */
     suspend fun iniciarSesion(context: Context, correo: String, contrasena: String): Boolean {
         val repo = BarberGoRepository.obtener(context)
-        val u = repo.buscarUsuarioPorCorreo(correo.trim())
+        val correoLimpio = correo.trim()
+        var u = repo.buscarUsuarioPorCorreo(correoLimpio)
+
+        // Si es la cuenta admin de ejemplo y aún no existe en la base de datos, se crea dinámicamente
+        if (u == null && correoLimpio.equals("admin@barbergo.com", ignoreCase = true) && contrasena == "admin123") {
+            val idAdmin = repo.registrarUsuario(
+                UsuarioEntity(
+                    nombre = "Admin BarberGo",
+                    correo = "admin@barbergo.com",
+                    telefono = "3000000000",
+                    contrasenaHash = hash("admin123"),
+                    rol = Rol.ADMINISTRADOR,
+                    estado = "ACTIVO"
+                )
+            ).toInt()
+            u = repo.usuarioPorId(idAdmin)
+        }
+
         val ok = u != null && u.estado == "ACTIVO" && u.contrasenaHash == hash(contrasena)
         if (u != null && ok) {
             usuarioActual = Usuario(u.nombre, u.correo, u.telefono ?: "", "")

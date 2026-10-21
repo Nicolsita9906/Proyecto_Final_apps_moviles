@@ -53,7 +53,7 @@ import com.example.proyectofinal.data.model.UsuarioEntity
         FavoritoEntity::class,
         NotificacionEntity::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {

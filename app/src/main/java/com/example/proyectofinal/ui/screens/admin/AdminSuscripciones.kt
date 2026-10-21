@@ -168,7 +168,7 @@ fun AdminSuscripcionesScreen(
                                 shape = RoundedCornerShape(8.dp),
                                 modifier = Modifier.fillMaxWidth()
                             ) {
-                                Text("📩 Enviar recordatorio de pago", fontSize = 11.sp, color = Dorado)
+                                Text("Enviar recordatorio de pago", fontSize = 11.sp, color = Dorado)
                             }
                         }
                     }

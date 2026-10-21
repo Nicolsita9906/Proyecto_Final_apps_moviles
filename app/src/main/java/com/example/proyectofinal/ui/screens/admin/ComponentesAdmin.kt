@@ -8,14 +8,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -62,7 +60,7 @@ fun EncabezadoAdmin(
             }
         },
         actions = {
-            IconButton(
+            TextButton(
                 onClick = {
                     cerrarSesion(context)
                     navController.navigate(Pantallas.Login.ruta) {
@@ -70,7 +68,7 @@ fun EncabezadoAdmin(
                     }
                 }
             ) {
-                Text("🚪", fontSize = 20.sp)
+                Text("Cerrar sesión", fontSize = 12.sp, color = Dorado, fontWeight = FontWeight.Bold)
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(
@@ -145,32 +143,32 @@ fun NavegacionInferiorAdmin(
         modifier = Modifier
             .fillMaxWidth()
             .background(Oscuro)
-            .padding(vertical = 10.dp),
+            .padding(vertical = 14.dp),
         horizontalArrangement = Arrangement.SpaceAround,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        ElementoNavAdmin("📊", "Panel", pestanaActual == PestanaAdmin.PANEL) {
+        ElementoNavAdmin("Panel", pestanaActual == PestanaAdmin.PANEL) {
             if (pestanaActual != PestanaAdmin.PANEL) {
                 navController.navigate(Pantallas.AdminPanel.ruta) {
                     popUpTo(Pantallas.AdminPanel.ruta) { inclusive = true }
                 }
             }
         }
-        ElementoNavAdmin("👥", "Usuarios", pestanaActual == PestanaAdmin.USUARIOS) {
+        ElementoNavAdmin("Usuarios", pestanaActual == PestanaAdmin.USUARIOS) {
             if (pestanaActual != PestanaAdmin.USUARIOS) {
                 navController.navigate(Pantallas.AdminUsuarios.ruta) {
                     popUpTo(Pantallas.AdminPanel.ruta)
                 }
             }
         }
-        ElementoNavAdmin("💈", "Barberías", pestanaActual == PestanaAdmin.BARBERIAS) {
+        ElementoNavAdmin("Barberías", pestanaActual == PestanaAdmin.BARBERIAS) {
             if (pestanaActual != PestanaAdmin.BARBERIAS) {
                 navController.navigate(Pantallas.AdminBarberias.ruta) {
                     popUpTo(Pantallas.AdminPanel.ruta)
                 }
             }
         }
-        ElementoNavAdmin("💳", "Suscrip.", pestanaActual == PestanaAdmin.SUSCRIPCIONES) {
+        ElementoNavAdmin("Suscrip.", pestanaActual == PestanaAdmin.SUSCRIPCIONES) {
             if (pestanaActual != PestanaAdmin.SUSCRIPCIONES) {
                 navController.navigate(Pantallas.AdminSuscripciones.ruta) {
                     popUpTo(Pantallas.AdminPanel.ruta)
@@ -182,21 +180,17 @@ fun NavegacionInferiorAdmin(
 
 @Composable
 private fun ElementoNavAdmin(
-    icono: String,
     etiqueta: String,
     seleccionado: Boolean,
     onClick: () -> Unit
 ) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.clickable { onClick() }
-    ) {
-        Text(icono, fontSize = 18.sp)
-        Text(
-            text = etiqueta,
-            fontSize = 10.sp,
-            fontWeight = if (seleccionado) FontWeight.Bold else FontWeight.Normal,
-            color = if (seleccionado) Dorado else Gris
-        )
-    }
+    Text(
+        text = etiqueta,
+        fontSize = 12.sp,
+        fontWeight = if (seleccionado) FontWeight.Bold else FontWeight.Normal,
+        color = if (seleccionado) Dorado else Gris,
+        modifier = Modifier
+            .clickable { onClick() }
+            .padding(horizontal = 12.dp)
+    )
 }

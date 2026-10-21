@@ -77,12 +77,12 @@ fun AdminPanelScreen(
             ) {
                 TarjetaMetrica(
                     titulo = "Usuarios",
-                    valor = "$totalUsuarios",
+                    valor = totalUsuarios.toString(),
                     modifier = Modifier.weight(1f)
                 )
                 TarjetaMetrica(
                     titulo = "Barberías",
-                    valor = "$totalBarberias",
+                    valor = totalBarberias.toString(),
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -93,13 +93,13 @@ fun AdminPanelScreen(
             ) {
                 TarjetaMetrica(
                     titulo = "Suscrip. Activas",
-                    valor = "$suscripcionesActivas",
+                    valor = suscripcionesActivas.toString(),
                     modifier = Modifier.weight(1f),
                     colorValor = Verde
                 )
                 TarjetaMetrica(
                     titulo = "Suscrip. Vencidas",
-                    valor = "$suscripcionesVencidas",
+                    valor = suscripcionesVencidas.toString(),
                     modifier = Modifier.weight(1f),
                     colorValor = Rojo
                 )
@@ -120,13 +120,13 @@ fun AdminPanelScreen(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                BotonAccesoRapidoAdmin("👥", "Usuarios", Modifier.weight(1f)) {
+                BotonAccesoRapidoAdmin("Gestionar Usuarios", Modifier.weight(1f)) {
                     navController.navigate(Pantallas.AdminUsuarios.ruta)
                 }
-                BotonAccesoRapidoAdmin("💈", "Barberías", Modifier.weight(1f)) {
+                BotonAccesoRapidoAdmin("Gestionar Barberías", Modifier.weight(1f)) {
                     navController.navigate(Pantallas.AdminBarberias.ruta)
                 }
-                BotonAccesoRapidoAdmin("💳", "Suscripciones", Modifier.weight(1f)) {
+                BotonAccesoRapidoAdmin("Suscripciones", Modifier.weight(1f)) {
                     navController.navigate(Pantallas.AdminSuscripciones.ruta)
                 }
             }
@@ -175,7 +175,6 @@ fun AdminPanelScreen(
 
 @Composable
 private fun BotonAccesoRapidoAdmin(
-    icono: String,
     titulo: String,
     modifier: Modifier = Modifier,
     onClick: () -> Unit
@@ -186,13 +185,11 @@ private fun BotonAccesoRapidoAdmin(
         shape = RoundedCornerShape(12.dp)
     ) {
         Column(
-            modifier = Modifier.padding(12.dp),
+            modifier = Modifier.padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Text(icono, fontSize = 24.sp)
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(titulo, fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Dorado)
+            Text(titulo, fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Dorado)
         }
     }
 }

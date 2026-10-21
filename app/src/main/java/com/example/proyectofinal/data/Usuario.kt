@@ -48,18 +48,35 @@ object Sesion {
         ).toInt()
 
         usuarioActual = usuario.copy(correo = correo, contrasena = "")
-        guardarSesion(context, correo, usuario.nombre.trim(), id)
+        guardarSesion(context, correo, usuario.nombre.trim(), id, Rol.CLIENTE)
         return true
     }
 
     /** true si el correo existe, está ACTIVO y la contraseña coincide. */
     suspend fun iniciarSesion(context: Context, correo: String, contrasena: String): Boolean {
         val repo = BarberGoRepository.obtener(context)
-        val u = repo.buscarUsuarioPorCorreo(correo.trim())
+        val correoLimpio = correo.trim()
+        var u = repo.buscarUsuarioPorCorreo(correoLimpio)
+
+        // Si es la cuenta admin de ejemplo y aún no existe en la base de datos, se crea dinámicamente
+        if (u == null && correoLimpio.equals("admin@barbergo.com", ignoreCase = true) && contrasena == "admin123") {
+            val idAdmin = repo.registrarUsuario(
+                UsuarioEntity(
+                    nombre = "Admin BarberGo",
+                    correo = "admin@barbergo.com",
+                    telefono = "3000000000",
+                    contrasenaHash = hash("admin123"),
+                    rol = Rol.ADMINISTRADOR,
+                    estado = "ACTIVO"
+                )
+            ).toInt()
+            u = repo.usuarioPorId(idAdmin)
+        }
+
         val ok = u != null && u.estado == "ACTIVO" && u.contrasenaHash == hash(contrasena)
         if (u != null && ok) {
             usuarioActual = Usuario(u.nombre, u.correo, u.telefono ?: "", "")
-            guardarSesion(context, u.correo, u.nombre, u.idUsuario)
+            guardarSesion(context, u.correo, u.nombre, u.idUsuario, u.rol)
         } else {
             usuarioActual = null
         }
@@ -91,18 +108,26 @@ fun obtenerIdUsuario(context: Context): Int {
     return prefs.getInt("id_usuario", -1)
 }
 
-/** Si no se pasa idUsuario, se conserva el que ya estaba guardado. */
+/** Rol del usuario logueado ("CLIENTE", "BARBERO", "ADMINISTRADOR"). Default "CLIENTE". */
+fun obtenerRol(context: Context): String {
+    val prefs = context.getSharedPreferences("sesion_prefs", Context.MODE_PRIVATE)
+    return prefs.getString("rol", Rol.CLIENTE) ?: Rol.CLIENTE
+}
+
+/** Si no se pasa idUsuario o rol, se conservan los que ya estaban guardados. */
 fun guardarSesion(
     context: Context,
     correo: String,
     nombre: String,
-    idUsuario: Int = obtenerIdUsuario(context)
+    idUsuario: Int = obtenerIdUsuario(context),
+    rol: String = obtenerRol(context)
 ) {
     val prefs = context.getSharedPreferences("sesion_prefs", Context.MODE_PRIVATE)
     prefs.edit()
         .putString("correo", correo)
         .putString("nombre", nombre)
         .putInt("id_usuario", idUsuario)
+        .putString("rol", rol)
         .apply()
 }
 

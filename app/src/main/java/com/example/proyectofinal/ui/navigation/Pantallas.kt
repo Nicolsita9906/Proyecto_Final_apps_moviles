@@ -16,4 +16,10 @@ sealed class Pantallas(val ruta: String) {
         fun crear(id: Int) = "detalle_cita/$id"
     }
     object Perfil : Pantallas("perfil")
+
+    // ---------- Administrador ----------
+    object AdminPanel : Pantallas("admin_panel")
+    object AdminUsuarios : Pantallas("admin_usuarios")
+    object AdminBarberias : Pantallas("admin_barberias")
+    object AdminSuscripciones : Pantallas("admin_suscripciones")
 }

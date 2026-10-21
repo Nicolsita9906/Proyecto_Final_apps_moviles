@@ -19,12 +19,15 @@ import com.example.proyectofinal.data.mapper.SIN_PREFERENCIA
 import com.example.proyectofinal.data.mapper.fechaIso
 import com.example.proyectofinal.data.mapper.hora24
 import com.example.proyectofinal.data.mapper.sumarMinutos
+import com.example.proyectofinal.data.model.BarberiaEntity
 import com.example.proyectofinal.data.model.CitaDetalle
 import com.example.proyectofinal.data.model.CitaEntity
 import com.example.proyectofinal.data.model.EstadoCitaDb
 import com.example.proyectofinal.data.model.NotificacionEntity
 import com.example.proyectofinal.data.model.ResenaEntity
+import com.example.proyectofinal.data.model.SuscripcionEntity
 import com.example.proyectofinal.data.model.TipoNotificacion
+import com.example.proyectofinal.data.model.UsuarioEntity
 import com.example.proyectofinal.data.obtenerIdUsuario
 import com.example.proyectofinal.data.repository.BarberGoRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -296,6 +299,43 @@ class BarberViewModel(application: Application) : AndroidViewModel(application) 
             runCatching {
                 repo.cancelarCita(id)
                 if (idCliente > 0) notificarCita(idCliente, "Cita cancelada")
+            }
+        }
+    }
+
+    // ---------------------------------------------------------------------------
+    //  Administración (gestión de usuarios, barberías y suscripciones)
+    // ---------------------------------------------------------------------------
+
+    val todosLosUsuarios: StateFlow<List<UsuarioEntity>> = repo.usuarios()
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+
+    val todasLasBarberiasAdmin: StateFlow<List<BarberiaEntity>> = repo.barberias()
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+
+    val todasLasSuscripcionesAdmin: StateFlow<List<SuscripcionEntity>> = repo.todasLasSuscripciones()
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+
+    fun cambiarEstadoUsuario(usuario: UsuarioEntity, nuevoEstado: String) {
+        viewModelScope.launch {
+            runCatching {
+                repo.actualizarUsuario(usuario.copy(estado = nuevoEstado))
+            }
+        }
+    }
+
+    fun cambiarEstadoBarberia(barberia: BarberiaEntity, nuevoEstado: String) {
+        viewModelScope.launch {
+            runCatching {
+                repo.actualizarBarberia(barberia.copy(estadoAprobacion = nuevoEstado))
+            }
+        }
+    }
+
+    fun cambiarEstadoSuscripcion(idSuscripcion: Int, nuevoEstado: String) {
+        viewModelScope.launch {
+            runCatching {
+                repo.cambiarEstadoSuscripcion(idSuscripcion, nuevoEstado)
             }
         }
     }

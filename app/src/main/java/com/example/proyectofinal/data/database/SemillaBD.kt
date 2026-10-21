@@ -38,14 +38,16 @@ object SemillaBD : RoomDatabase.Callback() {
         // ---- ciudad ----
         db.execSQL("INSERT INTO ciudad (id_ciudad, nombre, departamento) VALUES (1, 'Armenia', 'Quindío')")
 
-        // ---- usuario (barberos y clientes de ejemplo) ----
+        // ---- usuario (barberos, clientes y administrador de ejemplo) ----
+        // Hash SHA-256 de "admin123": 240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9
         db.execSQL(
             """
             INSERT INTO usuario (id_usuario, nombre, correo, telefono, contrasena_hash, foto, rol, estado, fecha_registro) VALUES
               (1, 'Andrés M.', 'andres@barbergo.com', NULL, '$sinAcceso', NULL, 'BARBERO', 'ACTIVO', $ahora),
               (2, 'Luis P.',   'luis@barbergo.com',   NULL, '$sinAcceso', NULL, 'BARBERO', 'ACTIVO', $ahora),
               (3, 'Camila R.', 'camila@ejemplo.com',  NULL, '$sinAcceso', NULL, 'CLIENTE', 'ACTIVO', $ahora),
-              (4, 'Juan D.',   'juan@ejemplo.com',    NULL, '$sinAcceso', NULL, 'CLIENTE', 'ACTIVO', $ahora)
+              (4, 'Juan D.',   'juan@ejemplo.com',    NULL, '$sinAcceso', NULL, 'CLIENTE', 'ACTIVO', $ahora),
+              (5, 'Admin BarberGo', 'admin@barbergo.com', '3000000000', '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9', NULL, 'ADMINISTRADOR', 'ACTIVO', $ahora)
             """.trimIndent()
         )
 

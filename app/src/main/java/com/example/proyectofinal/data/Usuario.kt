@@ -48,7 +48,7 @@ object Sesion {
         ).toInt()
 
         usuarioActual = usuario.copy(correo = correo, contrasena = "")
-        guardarSesion(context, correo, usuario.nombre.trim(), id)
+        guardarSesion(context, correo, usuario.nombre.trim(), id, Rol.CLIENTE)
         return true
     }
 
@@ -59,7 +59,7 @@ object Sesion {
         val ok = u != null && u.estado == "ACTIVO" && u.contrasenaHash == hash(contrasena)
         if (u != null && ok) {
             usuarioActual = Usuario(u.nombre, u.correo, u.telefono ?: "", "")
-            guardarSesion(context, u.correo, u.nombre, u.idUsuario)
+            guardarSesion(context, u.correo, u.nombre, u.idUsuario, u.rol)
         } else {
             usuarioActual = null
         }
@@ -91,18 +91,26 @@ fun obtenerIdUsuario(context: Context): Int {
     return prefs.getInt("id_usuario", -1)
 }
 
-/** Si no se pasa idUsuario, se conserva el que ya estaba guardado. */
+/** Rol del usuario logueado ("CLIENTE", "BARBERO", "ADMINISTRADOR"). Default "CLIENTE". */
+fun obtenerRol(context: Context): String {
+    val prefs = context.getSharedPreferences("sesion_prefs", Context.MODE_PRIVATE)
+    return prefs.getString("rol", Rol.CLIENTE) ?: Rol.CLIENTE
+}
+
+/** Si no se pasa idUsuario o rol, se conservan los que ya estaban guardados. */
 fun guardarSesion(
     context: Context,
     correo: String,
     nombre: String,
-    idUsuario: Int = obtenerIdUsuario(context)
+    idUsuario: Int = obtenerIdUsuario(context),
+    rol: String = obtenerRol(context)
 ) {
     val prefs = context.getSharedPreferences("sesion_prefs", Context.MODE_PRIVATE)
     prefs.edit()
         .putString("correo", correo)
         .putString("nombre", nombre)
         .putInt("id_usuario", idUsuario)
+        .putString("rol", rol)
         .apply()
 }
 

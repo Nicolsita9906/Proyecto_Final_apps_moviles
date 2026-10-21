@@ -16,6 +16,10 @@ import com.example.proyectofinal.ui.screens.MisCitasScreen
 import com.example.proyectofinal.ui.screens.PerfilScreen
 import com.example.proyectofinal.ui.screens.ServicioBarberoScreen
 import com.example.proyectofinal.ui.screens.SplashScreen
+import com.example.proyectofinal.ui.screens.admin.AdminBarberiasScreen
+import com.example.proyectofinal.ui.screens.admin.AdminPanelScreen
+import com.example.proyectofinal.ui.screens.admin.AdminSuscripcionesScreen
+import com.example.proyectofinal.ui.screens.admin.AdminUsuariosScreen
 import com.example.proyectofinal.ui.screens.auth.PantallaLogin
 import com.example.proyectofinal.ui.screens.auth.PantallaRegistro
 import com.example.proyectofinal.ui.screens.clientes.PantallaConfirmar
@@ -82,5 +86,11 @@ fun AppNav(inicio: String, vm: BarberViewModel = viewModel()) {
             DetalleCitaScreen(nav, vm, entry.arguments?.getInt("citaId") ?: -1)
         }
         composable(Pantallas.Perfil.ruta) { PerfilScreen(nav, vm) }
+
+        // ---------- Administrador ----------
+        composable(Pantallas.AdminPanel.ruta) { AdminPanelScreen(nav, vm) }
+        composable(Pantallas.AdminUsuarios.ruta) { AdminUsuariosScreen(nav, vm) }
+        composable(Pantallas.AdminBarberias.ruta) { AdminBarberiasScreen(nav, vm) }
+        composable(Pantallas.AdminSuscripciones.ruta) { AdminSuscripcionesScreen(nav, vm) }
     }
 }

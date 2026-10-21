@@ -140,6 +140,7 @@ class BarberGoRepository private constructor(db: AppDatabase) {
     suspend fun eliminarCita(cita: CitaEntity) = citaDao.eliminar(cita)
 
     // ------------------------------- suscripcion y pago_suscripcion -------------------------------
+    fun todasLasSuscripciones(): Flow<List<SuscripcionEntity>> = suscripcionDao.obtenerTodas()
     fun suscripcionesDeBarbero(idBarbero: Int): Flow<List<SuscripcionEntity>> = suscripcionDao.deBarbero(idBarbero)
     fun suscripcionVigente(idBarbero: Int): Flow<SuscripcionEntity?> = suscripcionDao.vigenteDe(idBarbero)
     suspend fun agregarSuscripcion(suscripcion: SuscripcionEntity): Long = suscripcionDao.insertar(suscripcion)

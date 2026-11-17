@@ -7,6 +7,7 @@ import androidx.room.Query
 import androidx.room.Update
 import com.example.proyectofinal.data.model.CitaDetalle
 import com.example.proyectofinal.data.model.CitaEntity
+import com.example.proyectofinal.data.model.CitaRecibida
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -60,15 +61,76 @@ interface CitaDao {
     )
     fun activasDeBarbero(idBarbero: Int, fecha: String): Flow<List<CitaEntity>>
 
-    /** > 0 si el barbero ya tiene una cita activa a esa hora (RNF4 del script). */
+    /** Citas activas SIN barbero asignado ("Sin preferencia") de una barbería en un día. */
+    @Query(
+        """
+        SELECT * FROM cita
+        WHERE id_barbero IS NULL AND id_barberia = :idBarberia AND fecha = :fecha
+          AND estado NOT IN ('CANCELADA', 'RECHAZADA')
+        ORDER BY hora_inicio
+        """
+    )
+    fun activasSinBarbero(idBarberia: Int, fecha: String): Flow<List<CitaEntity>>
+
+    /**
+     * > 0 si el barbero ya tiene una cita activa que se CRUZA con [horaInicio, horaFin) (RNF4).
+     * Las horas son "HH:mm", así que se pueden comparar como texto.
+     * excluir = id de la cita que se está modificando (para que no choque consigo misma).
+     */
     @Query(
         """
         SELECT COUNT(*) FROM cita
-        WHERE id_barbero = :idBarbero AND fecha = :fecha AND hora_inicio = :horaInicio
+        WHERE id_barbero = :idBarbero AND fecha = :fecha
           AND estado NOT IN ('CANCELADA', 'RECHAZADA')
+          AND hora_inicio < :horaFin AND hora_fin > :horaInicio
+          AND id_cita != :excluir
         """
     )
-    suspend fun contarConflictos(idBarbero: Int, fecha: String, horaInicio: String): Int
+    suspend fun contarCruces(idBarbero: Int, fecha: String, horaInicio: String, horaFin: String, excluir: Int): Int
+
+    /** Igual que contarCruces, pero entre las citas "Sin preferencia" de la barbería. */
+    @Query(
+        """
+        SELECT COUNT(*) FROM cita
+        WHERE id_barbero IS NULL AND id_barberia = :idBarberia AND fecha = :fecha
+          AND estado NOT IN ('CANCELADA', 'RECHAZADA')
+          AND hora_inicio < :horaFin AND hora_fin > :horaInicio
+          AND id_cita != :excluir
+        """
+    )
+    suspend fun contarCrucesSinBarbero(idBarberia: Int, fecha: String, horaInicio: String, horaFin: String, excluir: Int): Int
+
+    /**
+     * Citas que recibe un barbero: las asignadas a él y las "Sin preferencia"
+     * de las barberías de las que es propietario. Con nombre del cliente y del servicio.
+     */
+    @Query(
+        """
+        SELECT c.id_cita AS id_cita,
+               c.id_cliente AS id_cliente,
+               c.id_barbero AS id_barbero,
+               c.id_barberia AS id_barberia,
+               c.fecha AS fecha,
+               c.hora_inicio AS hora_inicio,
+               c.hora_fin AS hora_fin,
+               c.estado AS estado,
+               c.valor_total AS valor_total,
+               s.nombre AS servicio_nombre,
+               u.nombre AS cliente_nombre,
+               b.nombre AS barberia_nombre
+        FROM cita c
+        JOIN servicio s ON s.id_servicio = c.id_servicio
+        JOIN usuario u  ON u.id_usuario  = c.id_cliente
+        JOIN barberia b ON b.id_barberia = c.id_barberia
+        WHERE c.id_barbero = :idBarbero OR (c.id_barbero IS NULL AND b.id_propietario = :idBarbero)
+        ORDER BY c.fecha, c.hora_inicio
+        """
+    )
+    fun recibidasPorBarbero(idBarbero: Int): Flow<List<CitaRecibida>>
+
+    /** Acepta/rechaza una cita y deja asignado al barbero que la atendió. */
+    @Query("UPDATE cita SET estado = :estado, id_barbero = :idBarbero WHERE id_cita = :idCita")
+    suspend fun cambiarEstadoYAsignar(idCita: Int, estado: String, idBarbero: Int)
 
     @Query("UPDATE cita SET estado = :estado WHERE id_cita = :idCita")
     suspend fun cambiarEstado(idCita: Int, estado: String)

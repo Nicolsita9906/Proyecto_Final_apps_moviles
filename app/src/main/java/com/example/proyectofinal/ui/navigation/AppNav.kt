@@ -25,7 +25,15 @@ import com.example.proyectofinal.ui.screens.auth.PantallaRegistro
 import com.example.proyectofinal.ui.screens.clientes.PantallaConfirmar
 import com.example.proyectofinal.ui.screens.clientes.PantallaDetalle
 import com.example.proyectofinal.ui.screens.clientes.PantallaInicio
+import com.example.proyectofinal.ui.screens.barbero.BarberoCitasScreen
+import com.example.proyectofinal.ui.screens.barbero.BarberoHorariosScreen
+import com.example.proyectofinal.ui.screens.barbero.BarberoPanelScreen
+import com.example.proyectofinal.ui.screens.barbero.BarberoPerfilScreen
+import com.example.proyectofinal.ui.screens.barbero.BarberoServiciosScreen
+import com.example.proyectofinal.ui.screens.barbero.BarberoSuscripcionScreen
+import com.example.proyectofinal.ui.screens.barbero.MiBarberiaScreen
 import com.example.proyectofinal.viewmodel.BarberViewModel
+import com.example.proyectofinal.viewmodel.BarberoViewModel
 
 /**
  * Flujo completo:
@@ -33,10 +41,16 @@ import com.example.proyectofinal.viewmodel.BarberViewModel
  *  Inicio -> Detalle de barbería -> Servicio y barbero -> Fecha y hora -> Confirmar -> Mis citas
  *  Mis citas -> Detalle de cita (Modificar / Cancelar);  Perfil; barra inferior en Inicio, Citas y Perfil.
  *
- *  Con sesión guardada (SharedPreferences) la app abre directo en Inicio, sin splash.
+ *  Barbero: Panel -> Citas recibidas · Mi barbería · Servicios · Horarios · Suscripción · Perfil.
+ *
+ *  Con sesión guardada (SharedPreferences) la app abre directo en la pantalla de su rol, sin splash.
  */
 @Composable
-fun AppNav(inicio: String, vm: BarberViewModel = viewModel()) {
+fun AppNav(
+    inicio: String,
+    vm: BarberViewModel = viewModel(),
+    vmBarbero: BarberoViewModel = viewModel()
+) {
     val nav = rememberNavController()
     // Barberías que vienen de la base de datos (Room)
     val barberias by vm.barberias.collectAsState()
@@ -92,5 +106,14 @@ fun AppNav(inicio: String, vm: BarberViewModel = viewModel()) {
         composable(Pantallas.AdminUsuarios.ruta) { AdminUsuariosScreen(nav, vm) }
         composable(Pantallas.AdminBarberias.ruta) { AdminBarberiasScreen(nav, vm) }
         composable(Pantallas.AdminSuscripciones.ruta) { AdminSuscripcionesScreen(nav, vm) }
+
+        // ---------- Barbero ----------
+        composable(Pantallas.BarberoPanel.ruta) { BarberoPanelScreen(nav, vmBarbero) }
+        composable(Pantallas.BarberoCitas.ruta) { BarberoCitasScreen(nav, vmBarbero) }
+        composable(Pantallas.BarberoBarberia.ruta) { MiBarberiaScreen(nav, vmBarbero) }
+        composable(Pantallas.BarberoServicios.ruta) { BarberoServiciosScreen(nav, vmBarbero) }
+        composable(Pantallas.BarberoHorarios.ruta) { BarberoHorariosScreen(nav, vmBarbero) }
+        composable(Pantallas.BarberoSuscripcion.ruta) { BarberoSuscripcionScreen(nav, vmBarbero) }
+        composable(Pantallas.BarberoPerfil.ruta) { BarberoPerfilScreen(nav) }
     }
 }

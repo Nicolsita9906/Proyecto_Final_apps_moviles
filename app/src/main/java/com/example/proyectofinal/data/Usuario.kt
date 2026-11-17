@@ -31,8 +31,11 @@ object Sesion {
             .digest(texto.toByteArray())
             .joinToString("") { "%02x".format(it) }
 
-    /** Crea el usuario (rol CLIENTE) y deja la sesión iniciada. false si el correo ya existe. */
-    suspend fun registrar(context: Context, usuario: Usuario): Boolean {
+    /**
+     * Crea el usuario y deja la sesión iniciada. false si el correo ya existe.
+     * rol: Rol.CLIENTE (por defecto) o Rol.BARBERO ("Regístrate como barbero").
+     */
+    suspend fun registrar(context: Context, usuario: Usuario, rol: String = Rol.CLIENTE): Boolean {
         val repo = BarberGoRepository.obtener(context)
         val correo = usuario.correo.trim()
         if (repo.buscarUsuarioPorCorreo(correo) != null) return false
@@ -43,12 +46,12 @@ object Sesion {
                 correo = correo,
                 telefono = usuario.telefono,
                 contrasenaHash = hash(usuario.contrasena),
-                rol = Rol.CLIENTE
+                rol = rol
             )
         ).toInt()
 
         usuarioActual = usuario.copy(correo = correo, contrasena = "")
-        guardarSesion(context, correo, usuario.nombre.trim(), id, Rol.CLIENTE)
+        guardarSesion(context, correo, usuario.nombre.trim(), id, rol)
         return true
     }
 

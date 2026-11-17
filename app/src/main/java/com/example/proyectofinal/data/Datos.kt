@@ -51,7 +51,8 @@ data class Cita(
 
 data class Horario(val texto: String, val completa: String, val disponible: Boolean)
 
-data class Dia(val letra: String, val numero: Int)
+/** iso = fecha completa "2026-11-16" (la usa la reserva para guardar la cita). */
+data class Dia(val letra: String, val numero: Int, val iso: String = "")
 
 data class Resena(
     val autor: String,

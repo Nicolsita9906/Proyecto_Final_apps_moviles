@@ -10,19 +10,20 @@ import androidx.lifecycle.viewModelScope
 import com.example.proyectofinal.data.Barberia
 import com.example.proyectofinal.data.Barbero
 import com.example.proyectofinal.data.Cita
-import com.example.proyectofinal.data.DatosEstaticos
 import com.example.proyectofinal.data.Dia
+import com.example.proyectofinal.data.Disponibilidad
 import com.example.proyectofinal.data.Horario
 import com.example.proyectofinal.data.Resena
 import com.example.proyectofinal.data.Servicio
 import com.example.proyectofinal.data.mapper.SIN_PREFERENCIA
-import com.example.proyectofinal.data.mapper.fechaIso
+import com.example.proyectofinal.data.mapper.fechaCorta
 import com.example.proyectofinal.data.mapper.hora24
 import com.example.proyectofinal.data.mapper.sumarMinutos
 import com.example.proyectofinal.data.model.BarberiaEntity
 import com.example.proyectofinal.data.model.CitaDetalle
 import com.example.proyectofinal.data.model.CitaEntity
 import com.example.proyectofinal.data.model.EstadoCitaDb
+import com.example.proyectofinal.data.model.HorarioAtencionEntity
 import com.example.proyectofinal.data.model.NotificacionEntity
 import com.example.proyectofinal.data.model.ResenaEntity
 import com.example.proyectofinal.data.model.SuscripcionEntity
@@ -38,6 +39,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -50,7 +52,7 @@ import com.example.proyectofinal.data.mapper.aServicio
 /**
  * Estado compartido de las pantallas de cliente: puente entre la UI y los datos.
  * Los datos los pide al Repository (BarberGoRepository), que usa los DAO de Room.
- * Solo siguen estáticos (DatosEstaticos): los días y horas disponibles de la reserva.
+ * Los días y horas de la reserva se calculan con la BD (ver data/Disponibilidad.kt).
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 class BarberViewModel(application: Application) : AndroidViewModel(application) {
@@ -73,7 +75,7 @@ class BarberViewModel(application: Application) : AndroidViewModel(application) 
         super.onCleared()
     }
 
-    // ---------------- Barberías (barberia + ciudad + horario_atencion + resena) ----------------
+    // ---------------- Barberías (barberia + ciudad + horario_atencion + reseña) ----------------
     val barberias: StateFlow<List<Barberia>> = combine(
         repo.barberiasAprobadas(),
         repo.horarios()
@@ -137,10 +139,70 @@ class BarberViewModel(application: Application) : AndroidViewModel(application) 
         .map { lista -> lista.map { it.aBarbero() } + SIN_PREFERENCIA }
         .stateIn(viewModelScope, SharingStarted.Eagerly, listOf(SIN_PREFERENCIA))
 
-    // ---------------- Días y horas: siguen estáticos ----------------
-    // TODO: calcular con horario_atencion + bloqueo_horario + las citas ya tomadas del barbero ese día
-    val dias: List<Dia> = DatosEstaticos.dias
-    val horarios: List<Horario> = DatosEstaticos.horarios
+    // ---------------- Selección del flujo de reserva ----------------
+    private val _servicioSel = MutableStateFlow<Servicio?>(null)
+    val servicioSel: StateFlow<Servicio?> = _servicioSel
+    private val _barberoSel = MutableStateFlow<Barbero?>(null)
+    val barberoSel: StateFlow<Barbero?> = _barberoSel
+    private val _diaSel = MutableStateFlow<Dia?>(null)
+    val diaSel: StateFlow<Dia?> = _diaSel
+    private val _horaSel = MutableStateFlow<Horario?>(null)
+    val horaSel: StateFlow<Horario?> = _horaSel
+
+    /** id de la cita que se está modificando (null = cita nueva). */
+    private val _editandoId = MutableStateFlow<Int?>(null)
+
+    // ---------------- Días y horas disponibles (calculados con la BD) ----------------
+    private val horariosBarberiaActual: Flow<List<HorarioAtencionEntity>> =
+        idBarberiaActual.flatMapLatest { repo.horariosDeBarberia(it) }
+
+    /** Próximos días en que abre la barbería elegida. */
+    val dias: StateFlow<List<Dia>> = horariosBarberiaActual
+        .map { Disponibilidad.proximosDias(it) }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+
+    /**
+     * Franjas del día elegido: salen del horario de la barbería y se marcan como no disponibles
+     * si ya pasaron, si se cruzan con otra cita activa del barbero (o con otra "Sin preferencia"
+     * de la barbería) o si caen en un bloqueo_horario.
+     */
+    val horarios: StateFlow<List<Horario>> = combine(
+        idBarberiaActual, _diaSel, _barberoSel, _servicioSel, _editandoId
+    ) { idBarberia, dia, barbero, servicio, editando ->
+        SolicitudHorario(idBarberia, dia, barbero, servicio, editando)
+    }.flatMapLatest { sol ->
+        val dia = sol.dia
+        val barbero = sol.barbero
+        if (dia == null || barbero == null || dia.iso.isEmpty()) {
+            flowOf(emptyList())
+        } else {
+            val citasDelDia =
+                if (barbero.id == 0) repo.citasSinBarbero(sol.idBarberia, dia.iso)
+                else repo.citasActivasDeBarbero(barbero.id, dia.iso)
+            combine(
+                repo.horariosDeBarberia(sol.idBarberia),
+                citasDelDia,
+                repo.bloqueosDeBarberia(sol.idBarberia)
+            ) { horariosBd, citas, bloqueos ->
+                Disponibilidad.horarios(
+                    dia = dia,
+                    horariosBarberia = horariosBd,
+                    duracionMin = sol.servicio?.duracionMin ?: 0,
+                    citas = citas,
+                    bloqueos = bloqueos,
+                    excluirCita = sol.editando
+                )
+            }
+        }
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+
+    private data class SolicitudHorario(
+        val idBarberia: Int,
+        val dia: Dia?,
+        val barbero: Barbero?,
+        val servicio: Servicio?,
+        val editando: Int?
+    )
 
     // ---------------- Citas del cliente (tabla cita) ----------------
     private val detalles: StateFlow<List<CitaDetalle>> = _idCliente
@@ -203,29 +265,28 @@ class BarberViewModel(application: Application) : AndroidViewModel(application) 
         )
     }
 
-    // ---------------- Selección del flujo de reserva ----------------
-    private val _servicioSel = MutableStateFlow<Servicio?>(null)
-    val servicioSel: StateFlow<Servicio?> = _servicioSel
-    private val _barberoSel = MutableStateFlow<Barbero?>(null)
-    val barberoSel: StateFlow<Barbero?> = _barberoSel
-    private val _diaSel = MutableStateFlow<Dia?>(null)
-    val diaSel: StateFlow<Dia?> = _diaSel
-    private val _horaSel = MutableStateFlow<Horario?>(null)
-    val horaSel: StateFlow<Horario?> = _horaSel
-
-    private var editandoId: Int? = null
-
-    fun elegirServicio(s: Servicio) { _servicioSel.value = s }
-    fun elegirBarbero(b: Barbero) { _barberoSel.value = b }
-    fun elegirDia(d: Dia) { _diaSel.value = d }
-    fun elegirHora(h: Horario) { _horaSel.value = h }
+    // ---------------- Acciones de la reserva ----------------
+    // (cambiar servicio, barbero o día cambia las horas libres: la hora elegida se borra)
+    fun elegirServicio(s: Servicio) {
+        if (_servicioSel.value?.id != s.id) _horaSel.value = null
+        _servicioSel.value = s
+    }
+    fun elegirBarbero(b: Barbero) {
+        if (_barberoSel.value?.id != b.id) _horaSel.value = null
+        _barberoSel.value = b
+    }
+    fun elegirDia(d: Dia) {
+        if (_diaSel.value != d) _horaSel.value = null
+        _diaSel.value = d
+    }
+    fun elegirHora(h: Horario) { if (h.disponible) _horaSel.value = h }
 
     fun limpiarSeleccion() {
         _servicioSel.value = null
         _barberoSel.value = null
         _diaSel.value = null
         _horaSel.value = null
-        editandoId = null
+        _editandoId.value = null
     }
 
     /** Prepara la reserva con los datos de una cita existente (botón Modificar). */
@@ -238,40 +299,59 @@ class BarberViewModel(application: Application) : AndroidViewModel(application) 
         }
         _servicioSel.value = c.servicio
         _barberoSel.value = c.barbero
-        editandoId = c.id
+        _editandoId.value = c.id
     }
+
+    /** Resultado de intentar guardar la reserva. */
+    enum class ResultadoReserva { OK, FALTAN_DATOS, HORARIO_OCUPADO, ERROR }
 
     /**
      * Guarda la cita en la BD (INSERT), o actualiza la que se está modificando (UPDATE),
      * y crea una notificación para el cliente.
-     * Devuelve false si falta algún dato o no hay sesión.
+     *
+     * Antes de guardar vuelve a revisar en la BD que la franja siga libre: otra persona pudo
+     * reservarla mientras el cliente estaba en la pantalla de confirmación.
+     * El resultado llega en [onResultado] (en el hilo principal).
      */
-    fun confirmarCita(): Boolean {
-        val s = _servicioSel.value ?: return false
-        val b = _barberoSel.value ?: return false
-        val d = _diaSel.value ?: return false
-        val h = _horaSel.value ?: return false
+    fun confirmarCita(onResultado: (ResultadoReserva) -> Unit) {
+        val s = _servicioSel.value
+        val b = _barberoSel.value
+        val d = _diaSel.value
+        val h = _horaSel.value
         val idCliente = _idCliente.value
         val idBarberia = barberia.id
-        if (idCliente <= 0 || idBarberia <= 0) return false
+        if (s == null || b == null || d == null || h == null || d.iso.isEmpty() ||
+            idCliente <= 0 || idBarberia <= 0
+        ) {
+            onResultado(ResultadoReserva.FALTAN_DATOS)
+            return
+        }
 
         val idBarbero: Int? = if (b.id == 0) null else b.id        // null = sin preferencia
         val estado = if (b.id == 0) EstadoCitaDb.PENDIENTE else EstadoCitaDb.CONFIRMADA
-        val fecha = fechaIso(d.numero)
+        val fecha = d.iso
         val horaInicio = hora24(h.completa)
-        val horaFin = sumarMinutos(horaInicio, s.duracionMin)
-        val editId = editandoId
-        val resumen = "${s.nombre} el ${d.numero} ${DatosEstaticos.MES_CORTO} a las ${h.completa}"
+        val horaFin = sumarMinutos(horaInicio, if (s.duracionMin > 0) s.duracionMin else Disponibilidad.INTERVALO_MIN)
+        val editId = _editandoId.value
+        val resumen = "${s.nombre} el ${fechaCorta(fecha)} a las ${h.completa}"
 
         viewModelScope.launch {
+            val ocupado = runCatching {
+                repo.hayConflicto(idBarbero, idBarberia, fecha, horaInicio, horaFin, editId ?: -1)
+            }.getOrDefault(false)
+            if (ocupado) {
+                _horaSel.value = null
+                onResultado(ResultadoReserva.HORARIO_OCUPADO)
+                return@launch
+            }
+
             // runCatching: si la sesión guardada apunta a un usuario que ya no existe (BD recreada),
             // la llave foránea falla; así no se cierra la app.
-            runCatching {
+            val guardado = runCatching {
                 if (editId != null) {
                     repo.modificarCita(editId, s.id, idBarbero, fecha, horaInicio, horaFin, estado, s.precioValor)
                     notificarCita(idCliente, "Cita modificada: $resumen")
                 } else {
-                    // TODO: antes de insertar, validar repo.hayConflicto(idBarbero, fecha, horaInicio)
                     repo.agendarCita(
                         CitaEntity(
                             idCliente = idCliente,
@@ -287,10 +367,15 @@ class BarberViewModel(application: Application) : AndroidViewModel(application) 
                     )
                     notificarCita(idCliente, "Cita agendada: $resumen")
                 }
+            }.isSuccess
+
+            if (guardado) {
+                limpiarSeleccion()
+                onResultado(ResultadoReserva.OK)
+            } else {
+                onResultado(ResultadoReserva.ERROR)
             }
         }
-        limpiarSeleccion()
-        return true
     }
 
     fun cancelarCita(id: Int) {

@@ -4,7 +4,6 @@ import com.example.proyectofinal.R
 import com.example.proyectofinal.data.Barberia
 import com.example.proyectofinal.data.Barbero
 import com.example.proyectofinal.data.Cita
-import com.example.proyectofinal.data.DatosEstaticos
 import com.example.proyectofinal.data.Servicio
 import com.example.proyectofinal.data.model.BarberiaResumen
 import com.example.proyectofinal.data.model.CitaDetalle
@@ -19,7 +18,6 @@ import java.util.Locale
  * usan las pantallas (Servicio, Barberia, Barbero, Cita). Así la interfaz no cambia.
  */
 
-private const val ANIO_DEMO = 2026
 private val MESES = listOf("ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic")
 private val DIAS_CORTOS = listOf("", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom")
 
@@ -37,12 +35,6 @@ fun fechaCorta(iso: String): String {
     if (partes.size != 3) return iso
     val mes = partes[1].toIntOrNull()?.let { MESES.getOrNull(it - 1) } ?: partes[1]
     return "${partes[2].toIntOrNull() ?: partes[2]} $mes"
-}
-
-/** Día del mes elegido en la app -> "2026-09-10" (el mes sale de DatosEstaticos.MES_CORTO). */
-fun fechaIso(dia: Int): String {
-    val mes = MESES.indexOf(DatosEstaticos.MES_CORTO) + 1
-    return "%04d-%02d-%02d".format(ANIO_DEMO, if (mes > 0) mes else 1, dia)
 }
 
 /** "14:30" -> "2:30 PM" */

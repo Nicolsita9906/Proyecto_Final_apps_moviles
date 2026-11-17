@@ -7,8 +7,9 @@ import androidx.sqlite.db.SupportSQLiteDatabase
  * Datos iniciales (catálogo): se insertan cuando la base está vacía (ver onOpen).
  * Reemplaza a las listas de DatosEstaticos (barberías, servicios, barberos, reseñas).
  *
- * Los usuarios de ejemplo (barberos y reseñistas) no pueden iniciar sesión:
- * su contrasena_hash es un texto que ningún SHA-256 produce.
+ * Los clientes de ejemplo (reseñistas) no pueden iniciar sesión: su contrasena_hash es un texto
+ * que ningún SHA-256 produce. Los barberos de ejemplo SÍ pueden (para probar el rol Barbero):
+ *   andres@barbergo.com / barbero123   ·   luis@barbergo.com / barbero123
  *
  * Si cambias estas semillas o las entidades: sube `version` en AppDatabase (la base se recrea
  * y se vuelve a sembrar sola) o desinstala la app del emulador.
@@ -34,6 +35,8 @@ object SemillaBD : RoomDatabase.Callback() {
     private fun sembrar(db: SupportSQLiteDatabase) {
         val ahora = System.currentTimeMillis()
         val sinAcceso = "sin_acceso"
+        // SHA-256 de "barbero123"
+        val claveBarbero = "dd5b9f55350bf6b19a25746eb6534fd3022406e8dc297e96951ebd2c35e3a545"
 
         // ---- ciudad ----
         db.execSQL("INSERT INTO ciudad (id_ciudad, nombre, departamento) VALUES (1, 'Armenia', 'Quindío')")
@@ -43,8 +46,8 @@ object SemillaBD : RoomDatabase.Callback() {
         db.execSQL(
             """
             INSERT INTO usuario (id_usuario, nombre, correo, telefono, contrasena_hash, foto, rol, estado, fecha_registro) VALUES
-              (1, 'Andrés M.', 'andres@barbergo.com', NULL, '$sinAcceso', NULL, 'BARBERO', 'ACTIVO', $ahora),
-              (2, 'Luis P.',   'luis@barbergo.com',   NULL, '$sinAcceso', NULL, 'BARBERO', 'ACTIVO', $ahora),
+              (1, 'Andrés M.', 'andres@barbergo.com', '3001112233', '$claveBarbero', NULL, 'BARBERO', 'ACTIVO', $ahora),
+              (2, 'Luis P.',   'luis@barbergo.com',   '3004445566', '$claveBarbero', NULL, 'BARBERO', 'ACTIVO', $ahora),
               (3, 'Camila R.', 'camila@ejemplo.com',  NULL, '$sinAcceso', NULL, 'CLIENTE', 'ACTIVO', $ahora),
               (4, 'Juan D.',   'juan@ejemplo.com',    NULL, '$sinAcceso', NULL, 'CLIENTE', 'ACTIVO', $ahora),
               (5, 'Admin BarberGo', 'admin@barbergo.com', '3000000000', '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9', NULL, 'ADMINISTRADOR', 'ACTIVO', $ahora)
@@ -108,6 +111,22 @@ object SemillaBD : RoomDatabase.Callback() {
               (4, 2, 4, 'Muy buen ambiente y puntuales.', $ahora),
               (3, 3, 5, 'Excelente atención, el corte quedó perfecto.', $ahora),
               (4, 3, 5, 'Muy buen ambiente y puntuales.', $ahora)
+            """.trimIndent()
+        )
+
+        // ---- cita (2 citas de EJEMPLO para hoy en "Barbería el corte", para ver el panel del barbero) ----
+        // Servicios de la barbería 1: 1 = Corte clásico, 2 = Arreglo de barba, 3 = Corte + barba
+        val hoy = java.util.Calendar.getInstance().let {
+            "%04d-%02d-%02d".format(
+                it.get(java.util.Calendar.YEAR), it.get(java.util.Calendar.MONTH) + 1, it.get(java.util.Calendar.DAY_OF_MONTH)
+            )
+        }
+        db.execSQL(
+            """
+            INSERT INTO cita (id_cliente, id_barberia, id_barbero, id_servicio, fecha, hora_inicio, hora_fin,
+                              estado, valor_total, fecha_creacion) VALUES
+              (3, 1, 1,    3, '$hoy', '18:00', '18:45', 'CONFIRMADA', 35000, $ahora),
+              (4, 1, NULL, 1, '$hoy', '17:00', '17:30', 'PENDIENTE',  25000, $ahora)
             """.trimIndent()
         )
 

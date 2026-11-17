@@ -35,9 +35,9 @@ import com.example.proyectofinal.data.FondoOscuro
 import com.example.proyectofinal.data.Oscuro
 import com.example.proyectofinal.data.Sesion
 import com.example.proyectofinal.data.guardarSesion
-import com.example.proyectofinal.data.model.Rol
 import com.example.proyectofinal.data.obtenerRol
 import com.example.proyectofinal.navigation.Pantallas
+import com.example.proyectofinal.navigation.inicioPorRol
 import com.example.proyectofinal.ui.screens.CampoTexto
 import com.example.proyectofinal.ui.screens.EncabezadoAcceso
 import com.example.proyectofinal.ui.screens.SelectorAcceso
@@ -101,9 +101,8 @@ fun LoginScreen(navController: NavController, vm: BarberViewModel = viewModel())
                         // La consulta a la BD es suspend: se ejecuta dentro de una corrutina
                         scope.launch {
                             if (Sesion.iniciarSesion(context, correo, contrasena)) {
-                                val rol = obtenerRol(context)
-                                val destino = if (rol == Rol.ADMINISTRADOR) Pantallas.AdminPanel.ruta else Pantallas.Home.ruta
-                                navController.navigate(destino) {
+                                // Cliente -> Inicio · Barbero -> Panel del barbero · Admin -> Panel admin
+                                navController.navigate(inicioPorRol(obtenerRol(context))) {
                                     popUpTo(Pantallas.Login.ruta) { inclusive = true }
                                 }
                             } else {

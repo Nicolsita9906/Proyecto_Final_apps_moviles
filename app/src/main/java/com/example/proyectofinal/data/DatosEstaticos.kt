@@ -9,12 +9,10 @@ import com.example.proyectofinal.R
  *  El catálogo (barberías, servicios, barberos, reseñas) y las citas ahora viven en
  *  la base de datos Room: ver data/model (tablas), data/dao, data/database y data/repository.
  *
- *  De este archivo la app SOLO sigue usando:
- *    - dias / horarios / MES / MES_CORTO  (selector de fecha y hora de la reserva)
- *      TODO PERSISTENCIA: calcular con horario_atencion + citas ya tomadas del barbero.
+ *  Los días y horas de la reserva ahora se calculan en data/Disponibilidad.kt
+ *  (horario_atencion + citas activas + bloqueo_horario).
  *
- *  Todo lo demás (barberias, servicios, barberos, resenas, citasIniciales,
- *  barberiaPorCita) quedó como referencia y ya no se lee.
+ *  Nada de este archivo se lee ya: quedó solo como referencia.
  * ============================================================
  */
 object DatosEstaticos {

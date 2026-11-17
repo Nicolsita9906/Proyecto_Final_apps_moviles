@@ -1,6 +1,9 @@
 package com.example.proyectofinal.ui.screens.auth
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,17 +28,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 import com.example.proyectofinal.data.Dorado
 import com.example.proyectofinal.data.FondoOscuro
+import com.example.proyectofinal.data.Gris
 import com.example.proyectofinal.data.Oscuro
 import com.example.proyectofinal.data.Sesion
 import com.example.proyectofinal.data.Usuario
 import com.example.proyectofinal.data.guardarSesion
+import com.example.proyectofinal.data.model.Rol
 import com.example.proyectofinal.navigation.Pantallas
+import com.example.proyectofinal.navigation.inicioPorRol
 import com.example.proyectofinal.ui.screens.CampoTexto
 import com.example.proyectofinal.ui.screens.EncabezadoAcceso
 import com.example.proyectofinal.ui.screens.SelectorAcceso
@@ -50,6 +57,8 @@ fun PantallaRegistro(navController: NavController) {
     var contrasena by remember { mutableStateOf("") }
     var confirmar by remember { mutableStateOf("") }
     var error by remember { mutableStateOf("") }
+    // false = cuenta de cliente · true = cuenta de barbero ("Regístrate como barbero")
+    var esBarbero by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -57,7 +66,7 @@ fun PantallaRegistro(navController: NavController) {
             .background(FondoOscuro)
             .imePadding()
     ) {
-        EncabezadoAcceso("Crear cuenta")
+        EncabezadoAcceso(if (esBarbero) "Crear cuenta de barbero" else "Crear cuenta")
 
         Column(
             modifier = Modifier
@@ -136,9 +145,10 @@ fun PantallaRegistro(navController: NavController) {
                             contrasena = contrasena
                         )
                         // La consulta a la BD es suspend: se ejecuta dentro de una corrutina
+                        val rol = if (esBarbero) Rol.BARBERO else Rol.CLIENTE
                         scope.launch {
-                            if (Sesion.registrar(context, usuario)) {
-                                navController.navigate(Pantallas.Home.ruta) {
+                            if (Sesion.registrar(context, usuario, rol)) {
+                                navController.navigate(inicioPorRol(rol)) {
                                     popUpTo(Pantallas.Login.ruta) { inclusive = true }
                                 }
                             } else {
@@ -157,6 +167,40 @@ fun PantallaRegistro(navController: NavController) {
                     .height(56.dp)
             ) {
                 Text("Crear cuenta", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // "¿Eres barbero? Regístrate como barbero" (y al revés para volver a cliente)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    if (esBarbero) "¿Eres cliente? " else "¿Eres barbero? ",
+                    color = Gris,
+                    fontSize = 14.sp
+                )
+                Text(
+                    if (esBarbero) "Regístrate como cliente" else "Regístrate como barbero",
+                    color = Dorado,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp,
+                    modifier = Modifier.clickable {
+                        esBarbero = !esBarbero
+                        error = ""
+                    }
+                )
+            }
+            if (esBarbero) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    "Después de crear la cuenta podrás registrar tu barbería y activar tu suscripción.",
+                    color = Gris,
+                    fontSize = 12.sp,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
         }
     }

@@ -28,7 +28,10 @@ import androidx.navigation.NavController
 import com.example.proyectofinal.data.Beige
 import com.example.proyectofinal.data.Crema
 import com.example.proyectofinal.data.Gris
-import com.example.proyectofinal.data.DatosEstaticos
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import com.example.proyectofinal.data.mapper.fechaCorta
 import com.example.proyectofinal.data.obtenerNombre
 import com.example.proyectofinal.navigation.Pantallas
 import com.example.proyectofinal.viewmodel.BarberViewModel
@@ -46,22 +49,41 @@ fun PantallaConfirmar(navController: NavController, vm: BarberViewModel) {
     val hora by vm.horaSel.collectAsState()
     val cliente = Sesion.usuarioActual?.nombre ?: obtenerNombre(context)
     val fecha = dia?.let { d ->
-        hora?.let { h -> "${d.numero} ${DatosEstaticos.MES_CORTO} · ${h.completa}" }
+        hora?.let { h -> "${fechaCorta(d.iso)} · ${h.completa}" }
     } ?: ""
+    var guardando by remember { mutableStateOf(false) }
 
     Scaffold(
         containerColor = Crema,
         topBar = { BarraSuperior("Confirmar cita", navController) },
         bottomBar = {
             BotonDorado("Confirmar cita") {
-                // Crea la cita (o actualiza la que se está modificando) y va a Mis citas
-                if (vm.confirmarCita()) {
-                    Toast.makeText(context, "¡Cita confirmada!", Toast.LENGTH_SHORT).show()
-                    navController.navigate(Pantallas.MisCitas.ruta) {
-                        popUpTo(Pantallas.Home.ruta)
+                if (guardando) return@BotonDorado
+                guardando = true
+                // Crea la cita (o actualiza la que se está modificando) y va a Mis citas.
+                // El ViewModel revisa en la BD que la hora siga libre antes de guardar.
+                vm.confirmarCita { resultado ->
+                    guardando = false
+                    when (resultado) {
+                        BarberViewModel.ResultadoReserva.OK -> {
+                            Toast.makeText(context, "¡Cita confirmada!", Toast.LENGTH_SHORT).show()
+                            navController.navigate(Pantallas.MisCitas.ruta) {
+                                popUpTo(Pantallas.Home.ruta)
+                            }
+                        }
+                        BarberViewModel.ResultadoReserva.HORARIO_OCUPADO -> {
+                            Toast.makeText(
+                                context,
+                                "Esa hora acaba de ser reservada. Elige otra.",
+                                Toast.LENGTH_LONG
+                            ).show()
+                            navController.popBackStack()     // vuelve a Fecha y hora
+                        }
+                        BarberViewModel.ResultadoReserva.FALTAN_DATOS ->
+                            Toast.makeText(context, "Faltan datos de la reserva", Toast.LENGTH_SHORT).show()
+                        BarberViewModel.ResultadoReserva.ERROR ->
+                            Toast.makeText(context, "No se pudo guardar la cita", Toast.LENGTH_SHORT).show()
                     }
-                } else {
-                    Toast.makeText(context, "Faltan datos de la reserva", Toast.LENGTH_SHORT).show()
                 }
             }
         }

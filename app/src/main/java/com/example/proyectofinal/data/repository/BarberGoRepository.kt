@@ -8,6 +8,7 @@ import com.example.proyectofinal.data.model.BarberiaResumen
 import com.example.proyectofinal.data.model.BloqueoHorarioEntity
 import com.example.proyectofinal.data.model.CitaDetalle
 import com.example.proyectofinal.data.model.CitaEntity
+import com.example.proyectofinal.data.model.CitaRecibida
 import com.example.proyectofinal.data.model.CiudadEntity
 import com.example.proyectofinal.data.model.FavoritoEntity
 import com.example.proyectofinal.data.model.FotoBarberiaEntity
@@ -122,8 +123,28 @@ class BarberGoRepository private constructor(db: AppDatabase) {
     fun citasActivasDeBarbero(idBarbero: Int, fecha: String): Flow<List<CitaEntity>> =
         citaDao.activasDeBarbero(idBarbero, fecha)
     suspend fun citaPorId(id: Int): CitaEntity? = citaDao.obtenerPorId(id)
-    suspend fun hayConflicto(idBarbero: Int, fecha: String, horaInicio: String): Boolean =
-        citaDao.contarConflictos(idBarbero, fecha, horaInicio) > 0
+    fun citasSinBarbero(idBarberia: Int, fecha: String): Flow<List<CitaEntity>> =
+        citaDao.activasSinBarbero(idBarberia, fecha)
+
+    /**
+     * true si la franja [horaInicio, horaFin) se cruza con otra cita activa.
+     * idBarbero = null -> cita "Sin preferencia": se compara con las otras sin barbero de la barbería.
+     * excluirCita = id de la cita que se está modificando (-1 si es nueva).
+     */
+    suspend fun hayConflicto(
+        idBarbero: Int?,
+        idBarberia: Int,
+        fecha: String,
+        horaInicio: String,
+        horaFin: String,
+        excluirCita: Int = -1
+    ): Boolean =
+        if (idBarbero != null) citaDao.contarCruces(idBarbero, fecha, horaInicio, horaFin, excluirCita) > 0
+        else citaDao.contarCrucesSinBarbero(idBarberia, fecha, horaInicio, horaFin, excluirCita) > 0
+
+    fun citasRecibidas(idBarbero: Int): Flow<List<CitaRecibida>> = citaDao.recibidasPorBarbero(idBarbero)
+    suspend fun cambiarEstadoYAsignar(idCita: Int, estado: String, idBarbero: Int) =
+        citaDao.cambiarEstadoYAsignar(idCita, estado, idBarbero)
     suspend fun agendarCita(cita: CitaEntity): Long = citaDao.insertar(cita)
     suspend fun modificarCita(
         idCita: Int,

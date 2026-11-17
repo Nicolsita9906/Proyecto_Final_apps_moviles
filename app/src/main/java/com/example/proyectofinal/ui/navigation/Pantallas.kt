@@ -1,5 +1,7 @@
 package com.example.proyectofinal.navigation
 
+import com.example.proyectofinal.data.model.Rol
+
 sealed class Pantallas(val ruta: String) {
     object Login : Pantallas("login")
     object Registro : Pantallas("registro")
@@ -22,4 +24,20 @@ sealed class Pantallas(val ruta: String) {
     object AdminUsuarios : Pantallas("admin_usuarios")
     object AdminBarberias : Pantallas("admin_barberias")
     object AdminSuscripciones : Pantallas("admin_suscripciones")
+
+    // ---------- Barbero ----------
+    object BarberoPanel : Pantallas("barbero_panel")
+    object BarberoCitas : Pantallas("barbero_citas")
+    object BarberoBarberia : Pantallas("barbero_barberia")
+    object BarberoServicios : Pantallas("barbero_servicios")
+    object BarberoHorarios : Pantallas("barbero_horarios")
+    object BarberoSuscripcion : Pantallas("barbero_suscripcion")
+    object BarberoPerfil : Pantallas("barbero_perfil")
+}
+
+/** Primera pantalla después de iniciar sesión, según el rol del usuario. */
+fun inicioPorRol(rol: String): String = when (rol) {
+    Rol.ADMINISTRADOR -> Pantallas.AdminPanel.ruta
+    Rol.BARBERO -> Pantallas.BarberoPanel.ruta
+    else -> Pantallas.Home.ruta
 }

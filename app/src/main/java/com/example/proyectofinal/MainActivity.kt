@@ -7,11 +7,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.example.proyectofinal.data.Crema
-import com.example.proyectofinal.data.model.Rol
 import com.example.proyectofinal.data.obtenerRol
 import com.example.proyectofinal.data.obtenerSesion
 import com.example.proyectofinal.navigation.AppNav
 import com.example.proyectofinal.navigation.Pantallas
+import com.example.proyectofinal.navigation.inicioPorRol
 import com.example.proyectofinal.ui.components.theme.ProyectoFinalTheme
 
 class MainActivity : ComponentActivity() {
@@ -21,7 +21,7 @@ class MainActivity : ComponentActivity() {
         val sesion = obtenerSesion(this)
         val rol = obtenerRol(this)
         val inicio = if (sesion != null) {
-            if (rol == Rol.ADMINISTRADOR) Pantallas.AdminPanel.ruta else Pantallas.Home.ruta
+            inicioPorRol(rol)
         } else {
             Pantallas.Login.ruta
         }

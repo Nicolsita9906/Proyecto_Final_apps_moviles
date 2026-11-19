@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Marcador del mapa (pin con tijeras). La punta queda abajo al centro. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="40dp"
+    android:height="48dp"
+    android:viewportWidth="40"
+    android:viewportHeight="48">
+    <path
+        android:fillColor="#1D1B17"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="2"
+        android:pathData="M20,46 C20,46 4,28.5 4,18 A16,16 0 1,1 36,18 C36,28.5 20,46 20,46 Z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M20,18m-10,0a10,10 0,1 1,20 0a10,10 0,1 1,-20 0" />
+    <path
+        android:fillColor="#1D1B17"
+        android:pathData="M12.5,12.5a2.5,2.5 0,1 1,5 0a2.5,2.5 0,1 1,-5 0z M12.5,22.5a2.5,2.5 0,1 1,5 0a2.5,2.5 0,1 1,-5 0z M16.6,14 L27,22.6 L25.8,23.8 L15.6,15.2Z M16.6,21 L27,12.4 L25.8,11.2 L15.6,19.8Z" />
+</vector>

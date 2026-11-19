@@ -59,9 +59,9 @@ object SemillaBD : RoomDatabase.Callback() {
             """
             INSERT INTO barberia (id_barberia, id_propietario, id_ciudad, nombre, direccion, descripcion, telefono, foto,
                                   latitud, longitud, estado_aprobacion, horas_limite_cancelacion, fecha_registro) VALUES
-              (1, 1, 1, 'Barbería el corte', 'Cra 14 #10-25',    NULL, NULL, NULL, NULL, NULL, 'APROBADA', 2, $ahora),
-              (2, 2, 1, 'Talento urbano',    'Cl 20 #14-30',     NULL, NULL, NULL, NULL, NULL, 'APROBADA', 2, $ahora),
-              (3, 1, 1, 'Estilo clásico',    'Av. Bolívar #5-12', NULL, NULL, NULL, NULL, NULL, 'APROBADA', 2, $ahora)
+              (1, 1, 1, 'Barbería el corte', 'Cra 14 #10-25',    NULL, NULL, NULL, 4.5312, -75.6741, 'APROBADA', 2, $ahora),
+              (2, 2, 1, 'Talento urbano',    'Cl 20 #14-30',     NULL, NULL, NULL, 4.5378, -75.6702, 'APROBADA', 2, $ahora),
+              (3, 1, 1, 'Estilo clásico',    'Av. Bolívar #5-12', NULL, NULL, NULL, 4.5466, -75.6648, 'APROBADA', 2, $ahora)
             """.trimIndent()
         )
 

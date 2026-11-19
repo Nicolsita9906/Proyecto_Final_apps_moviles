@@ -152,6 +152,11 @@ fun MiBarberiaScreen(nav: NavController, vm: BarberoViewModel) {
                         nav.navigate(Pantallas.BarberoHorarios.ruta)
                     }
                 }
+                Spacer(Modifier.height(10.dp))
+                BotonPildora(
+                    if (barberia?.latitud == null) "Ubicar en el mapa" else "Cambiar ubicación en el mapa",
+                    relleno = false, modifier = Modifier.fillMaxWidth()
+                ) { nav.navigate(Pantallas.Mapa.ruta) }
                 Spacer(Modifier.height(16.dp))
             }
         }

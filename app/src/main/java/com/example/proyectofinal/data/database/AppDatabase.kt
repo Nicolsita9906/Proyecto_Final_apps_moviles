@@ -33,6 +33,7 @@ import com.example.proyectofinal.data.model.UsuarioEntity
  * Base de datos local de BarberGo: conecta las Entity con los DAO (igual que en la guía de Room).
  * Tiene las 13 tablas del script MySQL.
  *
+ * version = 5: coordenadas (latitud/longitud) de las barberías de ejemplo para el mapa.
  * version = 4: barberos de ejemplo con contraseña y citas de ejemplo (rol Barbero).
  * version = 2: se agregaron las 6 tablas que faltaban (foto_barberia, bloqueo_horario,
  * suscripcion, pago_suscripcion, favorito, notificacion). Cada vez que cambies una Entity
@@ -54,7 +55,7 @@ import com.example.proyectofinal.data.model.UsuarioEntity
         FavoritoEntity::class,
         NotificacionEntity::class
     ],
-    version = 4,
+    version = 5,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {

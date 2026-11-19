@@ -68,6 +68,12 @@ class BarberGoRepository private constructor(db: AppDatabase) {
     suspend fun actualizarCiudad(ciudad: CiudadEntity) = ciudadDao.actualizar(ciudad)
     suspend fun eliminarCiudad(ciudad: CiudadEntity) = ciudadDao.eliminar(ciudad)
 
+    /** id de la ciudad con ese nombre; si no existe se crea. */
+    suspend fun obtenerOCrearCiudad(nombre: String, departamento: String): Int {
+        buscarCiudad(nombre)?.let { return it.idCiudad }
+        return agregarCiudad(CiudadEntity(nombre = nombre, departamento = departamento)).toInt()
+    }
+
     // ------------------------------- usuario -------------------------------
     fun usuarios(): Flow<List<UsuarioEntity>> = usuarioDao.obtenerTodos()
     fun usuariosPorRol(rol: String): Flow<List<UsuarioEntity>> = usuarioDao.porRol(rol)
@@ -100,6 +106,18 @@ class BarberGoRepository private constructor(db: AppDatabase) {
     suspend fun agregarHorario(horario: HorarioAtencionEntity): Long = horarioDao.insertar(horario)
     suspend fun actualizarHorario(horario: HorarioAtencionEntity) = horarioDao.actualizar(horario)
     suspend fun eliminarHorario(horario: HorarioAtencionEntity) = horarioDao.eliminar(horario)
+
+    /** Horario de una barbería nueva: Lun-Sáb 09:00-19:00, domingo cerrado (se cambia en "Horarios"). */
+    suspend fun crearHorarioInicial(idBarberia: Int) {
+        for (dia in 1..7) {
+            agregarHorario(
+                if (dia == 7) HorarioAtencionEntity(idBarberia = idBarberia, diaSemana = dia, cerrado = true)
+                else HorarioAtencionEntity(
+                    idBarberia = idBarberia, diaSemana = dia, horaApertura = "09:00", horaCierre = "19:00"
+                )
+            )
+        }
+    }
 
     // ------------------------------- bloqueo_horario -------------------------------
     fun bloqueosDeBarberia(idBarberia: Int): Flow<List<BloqueoHorarioEntity>> = bloqueoDao.deBarberia(idBarberia)

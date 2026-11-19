@@ -1,4 +1,6 @@
-package com.example.proyectofinal.ui.screens
+package com.example.proyectofinal.ui.screens.clientes
+
+import com.example.proyectofinal.ui.screens.*
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -14,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.proyectofinal.data.Disponibilidad
-import com.example.proyectofinal.navigation.Pantallas
+import com.example.proyectofinal.ui.navigation.Pantallas
 import com.example.proyectofinal.data.*
 import com.example.proyectofinal.viewmodel.BarberViewModel
 

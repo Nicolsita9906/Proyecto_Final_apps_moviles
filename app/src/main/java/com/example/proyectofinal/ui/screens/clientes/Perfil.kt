@@ -1,4 +1,6 @@
-package com.example.proyectofinal.ui.screens
+package com.example.proyectofinal.ui.screens.clientes
+
+import com.example.proyectofinal.ui.screens.*
 
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -27,7 +29,7 @@ import com.example.proyectofinal.data.Sesion
 import com.example.proyectofinal.data.cerrarSesion
 import com.example.proyectofinal.data.obtenerNombre
 import com.example.proyectofinal.data.obtenerSesion
-import com.example.proyectofinal.navigation.Pantallas
+import com.example.proyectofinal.ui.navigation.Pantallas
 import com.example.proyectofinal.data.*
 import com.example.proyectofinal.viewmodel.BarberViewModel
 

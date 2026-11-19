@@ -1,4 +1,6 @@
-package com.example.proyectofinal.ui.screens
+package com.example.proyectofinal.ui.screens.auth
+
+import com.example.proyectofinal.ui.screens.*
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

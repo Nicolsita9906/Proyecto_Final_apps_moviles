@@ -49,7 +49,7 @@ import com.example.proyectofinal.data.Dorado
 import com.example.proyectofinal.data.Gris
 import com.example.proyectofinal.data.Horario
 import com.example.proyectofinal.data.Oscuro
-import com.example.proyectofinal.navigation.Pantallas
+import com.example.proyectofinal.ui.navigation.Pantallas
 import java.util.Locale
 
 // ============================================================

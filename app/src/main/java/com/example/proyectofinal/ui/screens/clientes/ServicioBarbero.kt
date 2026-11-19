@@ -1,4 +1,6 @@
-package com.example.proyectofinal.ui.screens
+package com.example.proyectofinal.ui.screens.clientes
+
+import com.example.proyectofinal.ui.screens.*
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -20,7 +22,7 @@ import com.example.proyectofinal.data.Barbero
 import com.example.proyectofinal.data.Crema
 import com.example.proyectofinal.data.Dorado
 import com.example.proyectofinal.data.Gris
-import com.example.proyectofinal.navigation.Pantallas
+import com.example.proyectofinal.ui.navigation.Pantallas
 import com.example.proyectofinal.viewmodel.BarberViewModel
 
 /** Texto secundario del barbero: "★ 4.9 · Disponible hoy" (o solo el texto si no tiene calificación). */

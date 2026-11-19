@@ -1,4 +1,4 @@
-package com.example.proyectofinal.data.local.database.dao
+package com.example.proyectofinal.data.dao
 
 import androidx.room.Dao
 import androidx.room.Delete

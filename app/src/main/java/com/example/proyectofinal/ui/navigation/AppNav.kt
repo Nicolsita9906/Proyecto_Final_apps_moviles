@@ -1,4 +1,4 @@
-package com.example.proyectofinal.navigation
+package com.example.proyectofinal.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -10,12 +10,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.proyectofinal.ui.screens.DetalleCitaScreen
-import com.example.proyectofinal.ui.screens.FechaHoraScreen
-import com.example.proyectofinal.ui.screens.MisCitasScreen
-import com.example.proyectofinal.ui.screens.PerfilScreen
-import com.example.proyectofinal.ui.screens.ServicioBarberoScreen
-import com.example.proyectofinal.ui.screens.SplashScreen
+import com.example.proyectofinal.ui.screens.clientes.DetalleCitaScreen
+import com.example.proyectofinal.ui.screens.clientes.FechaHoraScreen
+import com.example.proyectofinal.ui.screens.clientes.MisCitasScreen
+import com.example.proyectofinal.ui.screens.clientes.PerfilScreen
+import com.example.proyectofinal.ui.screens.clientes.ServicioBarberoScreen
+import com.example.proyectofinal.ui.screens.auth.SplashScreen
 import com.example.proyectofinal.ui.screens.admin.AdminBarberiasScreen
 import com.example.proyectofinal.ui.screens.admin.AdminPanelScreen
 import com.example.proyectofinal.ui.screens.admin.AdminSuscripcionesScreen

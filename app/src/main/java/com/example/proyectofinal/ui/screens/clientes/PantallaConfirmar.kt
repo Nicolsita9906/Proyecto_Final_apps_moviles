@@ -33,7 +33,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.example.proyectofinal.data.mapper.fechaCorta
 import com.example.proyectofinal.data.obtenerNombre
-import com.example.proyectofinal.navigation.Pantallas
+import com.example.proyectofinal.ui.navigation.Pantallas
 import com.example.proyectofinal.viewmodel.BarberViewModel
 import com.example.proyectofinal.data.Sesion
 import com.example.proyectofinal.ui.screens.BarraSuperior

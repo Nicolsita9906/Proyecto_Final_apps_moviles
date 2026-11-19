@@ -9,9 +9,9 @@ import androidx.compose.ui.Modifier
 import com.example.proyectofinal.data.Crema
 import com.example.proyectofinal.data.obtenerRol
 import com.example.proyectofinal.data.obtenerSesion
-import com.example.proyectofinal.navigation.AppNav
-import com.example.proyectofinal.navigation.Pantallas
-import com.example.proyectofinal.navigation.inicioPorRol
+import com.example.proyectofinal.ui.navigation.AppNav
+import com.example.proyectofinal.ui.navigation.Pantallas
+import com.example.proyectofinal.ui.navigation.inicioPorRol
 import com.example.proyectofinal.ui.components.theme.ProyectoFinalTheme
 
 class MainActivity : ComponentActivity() {

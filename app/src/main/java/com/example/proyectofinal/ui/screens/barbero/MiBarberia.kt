@@ -38,7 +38,7 @@ import com.example.proyectofinal.data.Crema
 import com.example.proyectofinal.data.Dorado
 import com.example.proyectofinal.data.Gris
 import com.example.proyectofinal.data.Oscuro
-import com.example.proyectofinal.navigation.Pantallas
+import com.example.proyectofinal.ui.navigation.Pantallas
 import com.example.proyectofinal.ui.screens.AmbarPendiente
 import com.example.proyectofinal.ui.screens.CajaIcono
 import com.example.proyectofinal.ui.screens.CampoTexto

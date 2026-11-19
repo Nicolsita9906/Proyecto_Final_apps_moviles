@@ -42,7 +42,7 @@ import com.example.proyectofinal.data.mapper.precioTexto
 import com.example.proyectofinal.data.model.CitaRecibida
 import com.example.proyectofinal.data.model.EstadoCitaDb
 import com.example.proyectofinal.data.model.EstadoSuscripcion
-import com.example.proyectofinal.navigation.Pantallas
+import com.example.proyectofinal.ui.navigation.Pantallas
 import com.example.proyectofinal.ui.screens.AmbarPendiente
 import com.example.proyectofinal.ui.screens.BotonPrimario
 import com.example.proyectofinal.ui.screens.CajaIcono

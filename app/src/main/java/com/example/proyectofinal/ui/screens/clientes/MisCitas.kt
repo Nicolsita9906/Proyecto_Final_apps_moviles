@@ -1,4 +1,6 @@
-package com.example.proyectofinal.ui.screens
+package com.example.proyectofinal.ui.screens.clientes
+
+import com.example.proyectofinal.ui.screens.*
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -14,7 +16,7 @@ import androidx.navigation.NavController
 import com.example.proyectofinal.data.Cita
 import com.example.proyectofinal.data.Crema
 import com.example.proyectofinal.data.Gris
-import com.example.proyectofinal.navigation.Pantallas
+import com.example.proyectofinal.ui.navigation.Pantallas
 import com.example.proyectofinal.viewmodel.BarberViewModel
 
 /** Pantalla 4 · Mis citas (Próximas / Historial). */

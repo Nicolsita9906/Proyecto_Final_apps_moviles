@@ -44,7 +44,7 @@ import com.example.proyectofinal.data.Oscuro
 import com.example.proyectofinal.data.Sesion
 import com.example.proyectofinal.data.cerrarSesion
 import com.example.proyectofinal.data.obtenerNombre
-import com.example.proyectofinal.navigation.Pantallas
+import com.example.proyectofinal.ui.navigation.Pantallas
 import com.example.proyectofinal.ui.screens.BarraInferior
 
 

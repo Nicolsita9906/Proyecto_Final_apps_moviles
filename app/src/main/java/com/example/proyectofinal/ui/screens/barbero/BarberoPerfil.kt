@@ -38,7 +38,7 @@ import com.example.proyectofinal.data.Oscuro
 import com.example.proyectofinal.data.cerrarSesion
 import com.example.proyectofinal.data.obtenerNombre
 import com.example.proyectofinal.data.obtenerSesion
-import com.example.proyectofinal.navigation.Pantallas
+import com.example.proyectofinal.ui.navigation.Pantallas
 import com.example.proyectofinal.ui.screens.FondoPerfil
 
 /** Perfil del barbero (pestaña "Perfil"): datos de la cuenta, atajos y cerrar sesión. */

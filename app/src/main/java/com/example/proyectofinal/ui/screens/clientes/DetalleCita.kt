@@ -1,4 +1,6 @@
-package com.example.proyectofinal.ui.screens
+package com.example.proyectofinal.ui.screens.clientes
+
+import com.example.proyectofinal.ui.screens.*
 
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
@@ -21,7 +23,7 @@ import com.example.proyectofinal.data.Beige
 import com.example.proyectofinal.data.Crema
 import com.example.proyectofinal.data.Dorado
 import com.example.proyectofinal.data.Gris
-import com.example.proyectofinal.navigation.Pantallas
+import com.example.proyectofinal.ui.navigation.Pantallas
 import com.example.proyectofinal.viewmodel.BarberViewModel
 
 /** Pantalla 5 · Detalle de la cita (ruta con parámetro citaId). */

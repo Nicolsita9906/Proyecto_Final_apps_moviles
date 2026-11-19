@@ -388,6 +388,18 @@ class BarberViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
+    /**
+     * DELETE del CRUD: borra definitivamente una cita cancelada o rechazada del historial del cliente.
+     * onResultado(null) = borrada; onResultado(mensaje) = error.
+     */
+    fun eliminarCita(id: Int, onResultado: (String?) -> Unit) {
+        val idCliente = _idCliente.value
+        viewModelScope.launch {
+            val borrada = runCatching { repo.eliminarCitaDeHistorial(id, idCliente) }.getOrDefault(false)
+            onResultado(if (borrada) null else "Solo se pueden eliminar citas canceladas o rechazadas")
+        }
+    }
+
     // ---------------------------------------------------------------------------
     //  Administración (gestión de usuarios, barberías y suscripciones)
     // ---------------------------------------------------------------------------

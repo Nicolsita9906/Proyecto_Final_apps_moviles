@@ -177,6 +177,9 @@ class BarberGoRepository private constructor(db: AppDatabase) {
     suspend fun cambiarEstadoCita(idCita: Int, estado: String) = citaDao.cambiarEstado(idCita, estado)
     suspend fun cancelarCita(idCita: Int) = citaDao.cancelar(idCita)
     suspend fun eliminarCita(cita: CitaEntity) = citaDao.eliminar(cita)
+    /** true si se borró (solo citas canceladas o rechazadas del mismo cliente). */
+    suspend fun eliminarCitaDeHistorial(idCita: Int, idCliente: Int): Boolean =
+        citaDao.eliminarDeHistorial(idCita, idCliente) > 0
 
     // ------------------------------- suscripcion y pago_suscripcion -------------------------------
     fun todasLasSuscripciones(): Flow<List<SuscripcionEntity>> = suscripcionDao.obtenerTodas()

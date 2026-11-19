@@ -25,6 +25,7 @@ import com.example.proyectofinal.ui.screens.auth.PantallaRegistro
 import com.example.proyectofinal.ui.screens.clientes.PantallaConfirmar
 import com.example.proyectofinal.ui.screens.clientes.PantallaDetalle
 import com.example.proyectofinal.ui.screens.clientes.PantallaInicio
+import com.example.proyectofinal.ui.screens.mapa.PantallaMapa
 import com.example.proyectofinal.ui.screens.barbero.BarberoCitasScreen
 import com.example.proyectofinal.ui.screens.barbero.BarberoHorariosScreen
 import com.example.proyectofinal.ui.screens.barbero.BarberoPanelScreen
@@ -40,6 +41,8 @@ import com.example.proyectofinal.viewmodel.BarberoViewModel
  *  Login / Registro -> (Splash, solo tras iniciar sesión o registrarse) -> Inicio
  *  Inicio -> Detalle de barbería -> Servicio y barbero -> Fecha y hora -> Confirmar -> Mis citas
  *  Mis citas -> Detalle de cita (Modificar / Cancelar);  Perfil; barra inferior en Inicio, Citas y Perfil.
+ *
+ *  Mapa: clientes desde la barra inferior; barbero y admin desde su panel.
  *
  *  Barbero: Panel -> Citas recibidas · Mi barbería · Servicios · Horarios · Suscripción · Perfil.
  *
@@ -100,6 +103,9 @@ fun AppNav(
             DetalleCitaScreen(nav, vm, entry.arguments?.getInt("citaId") ?: -1)
         }
         composable(Pantallas.Perfil.ruta) { PerfilScreen(nav, vm) }
+
+        // ---------- Mapa (todos los roles; solo barbero y admin registran barberías) ----------
+        composable(Pantallas.Mapa.ruta) { PantallaMapa(nav) }
 
         // ---------- Administrador ----------
         composable(Pantallas.AdminPanel.ruta) { AdminPanelScreen(nav, vm) }

@@ -13,6 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.outlined.ContentCut
 import androidx.compose.material.icons.outlined.CreditCard
+import androidx.compose.material.icons.outlined.Map
 import androidx.compose.material.icons.outlined.Schedule
 import androidx.compose.material.icons.outlined.Storefront
 import androidx.compose.material3.Scaffold
@@ -113,6 +114,7 @@ fun BarberoPanelScreen(nav: NavController, vm: BarberoViewModel) {
                 AccesoBarbero(Icons.Outlined.ContentCut, "Servicios") { nav.navigate(Pantallas.BarberoServicios.ruta) }
                 AccesoBarbero(Icons.Outlined.Schedule, "Horarios") { nav.navigate(Pantallas.BarberoHorarios.ruta) }
                 AccesoBarbero(Icons.Outlined.CreditCard, "Suscripción") { nav.navigate(Pantallas.BarberoSuscripcion.ruta) }
+                AccesoBarbero(Icons.Outlined.Map, "Mapa") { nav.navigate(Pantallas.Mapa.ruta) }
             }
             Spacer(Modifier.height(16.dp))
         }

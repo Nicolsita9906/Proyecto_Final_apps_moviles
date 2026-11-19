@@ -136,15 +136,7 @@ class BarberoViewModel(application: Application) : AndroidViewModel(application)
                             estadoAprobacion = "PENDIENTE"
                         )
                     ).toInt()
-                    // Horario inicial: Lun-Sáb 09:00-19:00, domingo cerrado (se cambia en "Horarios")
-                    for (dia in 1..7) {
-                        repo.agregarHorario(
-                            if (dia == 7) HorarioAtencionEntity(idBarberia = id, diaSemana = dia, cerrado = true)
-                            else HorarioAtencionEntity(
-                                idBarberia = id, diaSemana = dia, horaApertura = "09:00", horaCierre = "19:00"
-                            )
-                        )
-                    }
+                    repo.crearHorarioInicial(id)
                     _idBarberiaSel.value = id
                 }
             }.isSuccess
@@ -156,8 +148,7 @@ class BarberoViewModel(application: Application) : AndroidViewModel(application)
         val partes = texto.split(",").map { it.trim() }
         val nombre = partes[0]
         val departamento = partes.getOrNull(1).orEmpty().ifBlank { "Quindío" }
-        repo.buscarCiudad(nombre)?.let { return it.idCiudad }
-        return repo.agregarCiudad(CiudadEntity(nombre = nombre, departamento = departamento)).toInt()
+        return repo.obtenerOCrearCiudad(nombre, departamento)
     }
 
     // ---------------- Servicios y precios ----------------

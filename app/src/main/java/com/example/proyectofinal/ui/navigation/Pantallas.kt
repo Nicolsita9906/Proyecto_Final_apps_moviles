@@ -18,6 +18,7 @@ sealed class Pantallas(val ruta: String) {
         fun crear(id: Int) = "detalle_cita/$id"
     }
     object Perfil : Pantallas("perfil")
+    object Mapa : Pantallas("mapa")                     // Mapa de barberías (API Nominatim + OpenStreetMap)
 
     // ---------- Administrador ----------
     object AdminPanel : Pantallas("admin_panel")

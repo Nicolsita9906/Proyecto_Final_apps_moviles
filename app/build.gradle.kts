@@ -54,6 +54,13 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
 
+    // Consumo de APIs — según la guía "Consumo de APIs en Android con Jetpack Compose"
+    // Retrofit + Gson: peticiones HTTP a Nominatim (OpenStreetMap) y JSON -> data class
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.gson)
+    // osmdroid: dibuja el mapa de OpenStreetMap (gratis, sin API key)
+    implementation(libs.osmdroid.android)
+
     testImplementation(libs.junit)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)

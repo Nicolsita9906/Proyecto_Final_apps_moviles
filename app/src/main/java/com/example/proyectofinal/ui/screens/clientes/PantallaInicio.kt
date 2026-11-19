@@ -132,8 +132,8 @@ fun PantallaInicio(navController: NavController, barberias: List<Barberia>) {
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.Top
                     ) {
-                        AccesoRapido(R.drawable.search, "Buscar") {
-                            Toast.makeText(context, "Próximamente", Toast.LENGTH_SHORT).show()
+                        AccesoRapido(R.drawable.search, "Mapa") {
+                            navController.navigate(Pantallas.Mapa.ruta)
                         }
                         AccesoRapido(R.drawable.calendar, "Mis citas") {
                             navController.navigate(Pantallas.MisCitas.ruta)

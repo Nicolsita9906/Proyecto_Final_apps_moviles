@@ -1,6 +1,5 @@
 package com.example.proyectofinal.ui.screens
 
-import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -35,7 +34,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -358,19 +356,15 @@ fun HoraChip(h: Horario, seleccionada: Boolean, modifier: Modifier, onClick: () 
 
 // ---------- Barra inferior ----------
 
-/** Barra inferior manual: Inicio · Buscar · Citas · Perfil. */
+/** Barra inferior manual: Inicio · Mapa · Citas · Perfil. */
 @Composable
 fun BarraInferior(nav: NavController, actual: String, oscura: Boolean = false) {
-    val ctx = LocalContext.current
     Row(
         Modifier.fillMaxWidth().background(if (oscura) Oscuro else Color.White).padding(vertical = 14.dp),
         horizontalArrangement = Arrangement.SpaceAround
     ) {
         ItemNav("Inicio", actual == Pantallas.Home.ruta, oscura) { irA(nav, Pantallas.Home.ruta) }
-        ItemNav("Buscar", false, oscura) {
-            // TODO FUTURO: pantalla de búsqueda (no está en los mockups)
-            Toast.makeText(ctx, "Próximamente", Toast.LENGTH_SHORT).show()
-        }
+        ItemNav("Mapa", actual == Pantallas.Mapa.ruta, oscura) { irA(nav, Pantallas.Mapa.ruta) }
         ItemNav("Citas", actual == Pantallas.MisCitas.ruta, oscura) { irA(nav, Pantallas.MisCitas.ruta) }
         ItemNav("Perfil", actual == Pantallas.Perfil.ruta, oscura) { irA(nav, Pantallas.Perfil.ruta) }
     }

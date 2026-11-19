@@ -130,6 +130,10 @@ fun AdminPanelScreen(
                     navController.navigate(Pantallas.AdminSuscripciones.ruta)
                 }
             }
+            Spacer(modifier = Modifier.height(8.dp))
+            BotonAccesoRapidoAdmin("Mapa de barberías", Modifier.fillMaxWidth()) {
+                navController.navigate(Pantallas.Mapa.ruta)
+            }
 
             Spacer(modifier = Modifier.height(24.dp))
 

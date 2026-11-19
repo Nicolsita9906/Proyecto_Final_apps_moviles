@@ -36,8 +36,8 @@ import com.example.proyectofinal.data.Oscuro
 import com.example.proyectofinal.data.Sesion
 import com.example.proyectofinal.data.guardarSesion
 import com.example.proyectofinal.data.obtenerRol
-import com.example.proyectofinal.navigation.Pantallas
-import com.example.proyectofinal.navigation.inicioPorRol
+import com.example.proyectofinal.ui.navigation.Pantallas
+import com.example.proyectofinal.ui.navigation.inicioPorRol
 import com.example.proyectofinal.ui.screens.CampoTexto
 import com.example.proyectofinal.ui.screens.EncabezadoAcceso
 import com.example.proyectofinal.ui.screens.SelectorAcceso

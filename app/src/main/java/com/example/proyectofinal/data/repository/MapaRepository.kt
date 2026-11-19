@@ -1,6 +1,7 @@
 package com.example.proyectofinal.data.repository
 
 import com.example.proyectofinal.data.model.DireccionResponse
+import com.example.proyectofinal.data.model.LugarResponse
 import com.example.proyectofinal.data.remote.NominatimApi
 import com.example.proyectofinal.data.remote.RetrofitInstance
 
@@ -16,4 +17,7 @@ class MapaRepository(private val api: NominatimApi = RetrofitInstance.api) {
 
     suspend fun getDireccion(lat: Double, lon: Double): DireccionResponse =
         api.getDireccion(lat, lon)
+
+    suspend fun buscarLugares(texto: String): List<LugarResponse> =
+        api.buscarLugares(texto)
 }

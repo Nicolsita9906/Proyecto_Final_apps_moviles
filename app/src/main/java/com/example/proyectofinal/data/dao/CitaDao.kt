@@ -1,4 +1,4 @@
-package com.example.proyectofinal.data.local.database.dao
+package com.example.proyectofinal.data.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
@@ -167,6 +167,20 @@ interface CitaDao {
 
     @Delete
     suspend fun eliminar(cita: CitaEntity)
+
+    /**
+     * El cliente borra una cita de su historial. Solo se borra si es suya y ya no está activa
+     * (CANCELADA o RECHAZADA). Las COMPLETADAS no se borran: el barbero las usa en sus ingresos.
+     * Devuelve cuántas filas se borraron (0 = no se pudo).
+     */
+    @Query(
+        """
+        DELETE FROM cita
+        WHERE id_cita = :idCita AND id_cliente = :idCliente
+          AND estado IN ('CANCELADA', 'RECHAZADA')
+        """
+    )
+    suspend fun eliminarDeHistorial(idCita: Int, idCliente: Int): Int
 
     @Query("DELETE FROM cita")
     suspend fun eliminarTodas()

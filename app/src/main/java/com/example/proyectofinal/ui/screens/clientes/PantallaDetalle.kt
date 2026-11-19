@@ -53,8 +53,8 @@ import com.example.proyectofinal.ui.screens.BarraSuperior
 import com.example.proyectofinal.ui.screens.BotonDorado
 import com.example.proyectofinal.ui.screens.IconoCaja
 import com.example.proyectofinal.ui.screens.TarjetaBlanca
-import com.example.proyectofinal.ui.screens.subtituloBarbero
-import com.example.proyectofinal.navigation.Pantallas
+import com.example.proyectofinal.ui.screens.clientes.subtituloBarbero
+import com.example.proyectofinal.ui.navigation.Pantallas
 import com.example.proyectofinal.viewmodel.BarberViewModel
 
 // ---------------------------------------------------------

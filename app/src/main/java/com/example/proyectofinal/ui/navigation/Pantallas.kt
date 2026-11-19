@@ -1,4 +1,4 @@
-package com.example.proyectofinal.navigation
+package com.example.proyectofinal.ui.navigation
 
 import com.example.proyectofinal.data.model.Rol
 

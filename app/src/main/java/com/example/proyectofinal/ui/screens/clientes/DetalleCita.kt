@@ -1,5 +1,8 @@
-package com.example.proyectofinal.ui.screens
+package com.example.proyectofinal.ui.screens.clientes
 
+import com.example.proyectofinal.ui.screens.*
+
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -11,6 +14,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -19,7 +23,7 @@ import com.example.proyectofinal.data.Beige
 import com.example.proyectofinal.data.Crema
 import com.example.proyectofinal.data.Dorado
 import com.example.proyectofinal.data.Gris
-import com.example.proyectofinal.navigation.Pantallas
+import com.example.proyectofinal.ui.navigation.Pantallas
 import com.example.proyectofinal.viewmodel.BarberViewModel
 
 /** Pantalla 5 · Detalle de la cita (ruta con parámetro citaId). */
@@ -27,8 +31,12 @@ import com.example.proyectofinal.viewmodel.BarberViewModel
 fun DetalleCitaScreen(nav: NavController, vm: BarberViewModel, citaId: Int) {
     val citas by vm.citas.collectAsState()
     val cita = citas.firstOrNull { it.id == citaId }
+    val context = LocalContext.current
     var dialogo by remember { mutableStateOf(false) }
+    var dialogoEliminar by remember { mutableStateOf(false) }
     val activa = cita != null && cita.estado in setOf("Confirmada", "Pendiente")
+    // Solo las canceladas o rechazadas se pueden borrar del historial
+    val eliminable = cita != null && cita.estado in setOf("Cancelada", "Rechazada")
 
     Scaffold(
         containerColor = Crema,
@@ -56,6 +64,15 @@ fun DetalleCitaScreen(nav: NavController, vm: BarberViewModel, citaId: Int) {
                         colors = ButtonDefaults.buttonColors(containerColor = Rojo, contentColor = Color.White)
                     ) { Text("Cancelar", fontWeight = FontWeight.Bold) }
                 }
+            } else if (eliminable) {
+                Box(Modifier.background(Crema).padding(16.dp).fillMaxWidth()) {
+                    Button(
+                        onClick = { dialogoEliminar = true },
+                        modifier = Modifier.fillMaxWidth().height(48.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = Rojo, contentColor = Color.White)
+                    ) { Text("Eliminar del historial", fontWeight = FontWeight.Bold) }
+                }
             }
         }
     ) { padding ->
@@ -79,7 +96,6 @@ fun DetalleCitaScreen(nav: NavController, vm: BarberViewModel, citaId: Int) {
                 TarjetaBlanca {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(Icons.Default.LocationOn, null, tint = Gris, modifier = Modifier.size(16.dp))
-                        // TODO PERSISTENCIA: dirección de la barbería de la cita
                         Text(" ${vm.direccionDe(cita.id)}", fontSize = 12.sp, color = Gris)
                     }
                 }
@@ -98,6 +114,28 @@ fun DetalleCitaScreen(nav: NavController, vm: BarberViewModel, citaId: Int) {
                 }
             },
             dismissButton = { TextButton(onClick = { dialogo = false }) { Text("No") } }
+        )
+    }
+
+    if (dialogoEliminar) {
+        AlertDialog(
+            onDismissRequest = { dialogoEliminar = false },
+            title = { Text("Eliminar cita") },
+            text = { Text("La cita se borrará de tu historial y no se podrá recuperar.") },
+            confirmButton = {
+                TextButton(onClick = {
+                    dialogoEliminar = false
+                    vm.eliminarCita(citaId) { error ->
+                        if (error == null) {
+                            Toast.makeText(context, "Cita eliminada", Toast.LENGTH_SHORT).show()
+                            nav.popBackStack()          // vuelve a "Mis citas"
+                        } else {
+                            Toast.makeText(context, error, Toast.LENGTH_LONG).show()
+                        }
+                    }
+                }) { Text("Eliminar", color = Rojo) }
+            },
+            dismissButton = { TextButton(onClick = { dialogoEliminar = false }) { Text("No") } }
         )
     }
 }

@@ -7,6 +7,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.proyectofinal.data.model.BarberiaEntity
+import com.example.proyectofinal.data.model.DireccionResponse
+import com.example.proyectofinal.data.model.LugarResponse
 import com.example.proyectofinal.data.model.Rol
 import com.example.proyectofinal.data.model.UsuarioEntity
 import com.example.proyectofinal.data.obtenerIdUsuario
@@ -24,7 +26,7 @@ import kotlinx.coroutines.launch
 /**
  * Estado de la pantalla "Mapa de barberías" (Armenia).
  *
- *   PantallaMapa -> MapaViewModel -> MapaRepository    -> Nominatim (API, Retrofit)
+ *   PantallaMapa -> MapaViewModel -> MapaRepository    -> Nominatim (API, Retrofit): dirección y buscador
  *                                 -> BarberGoRepository -> Room (barberías guardadas)
  *
  *  - CLIENTE: ve las barberías APROBADAS que tienen ubicación.
@@ -72,7 +74,7 @@ class MapaViewModel(application: Application) : AndroidViewModel(application) {
     var punto by mutableStateOf<Pair<Double, Double>?>(null)
         private set
 
-    var uiState by mutableStateOf<UiState>(UiState.Idle)
+    var uiState by mutableStateOf<UiState<DireccionResponse>>(UiState.Idle)
         private set
 
     private var consulta: Job? = null
@@ -98,6 +100,37 @@ class MapaViewModel(application: Application) : AndroidViewModel(application) {
         consulta?.cancel()
         punto = null
         uiState = UiState.Idle
+    }
+
+    // ---------------- Buscador (lista de lugares que devuelve la API) ----------------
+    var busqueda by mutableStateOf<UiState<List<LugarResponse>>>(UiState.Idle)
+        private set
+
+    private var consultaBusqueda: Job? = null
+
+    /** GET /search: pide a la API los lugares de Armenia que coinciden con el texto. */
+    fun buscar(texto: String) {
+        val limpio = texto.trim()
+        if (limpio.length < 3) {
+            busqueda = UiState.Error("Escribe al menos 3 letras")
+            return
+        }
+        consultaBusqueda?.cancel()
+        consultaBusqueda = viewModelScope.launch {
+            busqueda = UiState.Loading
+            busqueda = try {
+                UiState.Success(mapaRepo.buscarLugares(limpio))
+            } catch (e: kotlinx.coroutines.CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                UiState.Error("No se pudo buscar. Revisa tu conexión a internet.")
+            }
+        }
+    }
+
+    fun limpiarBusqueda() {
+        consultaBusqueda?.cancel()
+        busqueda = UiState.Idle
     }
 
     // ---------------- Guardar ----------------

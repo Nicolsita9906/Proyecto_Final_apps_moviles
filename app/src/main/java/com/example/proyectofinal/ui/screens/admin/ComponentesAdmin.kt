@@ -31,7 +31,7 @@ import com.example.proyectofinal.data.FondoOscuro
 import com.example.proyectofinal.data.Gris
 import com.example.proyectofinal.data.Oscuro
 import com.example.proyectofinal.data.cerrarSesion
-import com.example.proyectofinal.navigation.Pantallas
+import com.example.proyectofinal.ui.navigation.Pantallas
 import com.example.proyectofinal.ui.screens.AmbarPendiente
 import com.example.proyectofinal.ui.screens.Rojo
 import com.example.proyectofinal.ui.screens.Verde

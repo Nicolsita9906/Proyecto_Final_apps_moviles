@@ -34,7 +34,7 @@ import com.example.proyectofinal.data.Gris
 import com.example.proyectofinal.data.mapper.hora12
 import com.example.proyectofinal.data.model.EstadoCitaDb
 import com.example.proyectofinal.data.obtenerNombre
-import com.example.proyectofinal.navigation.Pantallas
+import com.example.proyectofinal.ui.navigation.Pantallas
 import com.example.proyectofinal.ui.screens.EtiquetaSeccion
 import com.example.proyectofinal.ui.screens.Insignia
 import com.example.proyectofinal.ui.screens.TarjetaBlanca

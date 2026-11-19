@@ -1,4 +1,6 @@
-package com.example.proyectofinal.ui.screens
+package com.example.proyectofinal.ui.screens.clientes
+
+import com.example.proyectofinal.ui.screens.*
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -21,7 +23,7 @@ import com.example.proyectofinal.data.Crema
 import com.example.proyectofinal.data.Dorado
 import com.example.proyectofinal.data.Gris
 import com.example.proyectofinal.data.Oscuro
-import com.example.proyectofinal.navigation.Pantallas
+import com.example.proyectofinal.ui.navigation.Pantallas
 import com.example.proyectofinal.viewmodel.BarberViewModel
 
 /** Pantalla 1 · Detalle de barbería (Home). Pestañas: Servicios / Barberos / Reseñas. */
